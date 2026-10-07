@@ -244,12 +244,12 @@
             <span class="label">Read</span><span id="readingTimeDisplay">3:00</span>
         </div>
         <div class="msg msg-info" id="readingInfoLine">Read both tasks carefully. You may start writing early.</div>
-        <div class="question-block">
+        <div class="question-block" id="readingQBlock1">
             <div class="q-label">Task 1</div>
             <div id="questionTextReading1"></div>
             <div class="task-note" id="minWordsReading1"></div>
         </div>
-        <div class="question-block">
+        <div class="question-block" id="readingQBlock2">
             <div class="q-label">Task 2</div>
             <div id="questionTextReading2"></div>
             <div class="task-note" id="minWordsReading2"></div>
@@ -271,7 +271,7 @@
             <span class="stats-badge" style="margin-left:auto;">Page exits: <span class="num" id="writingExitCount">0</span></span>
         </div>
 
-        <div class="task-pager">
+        <div class="task-pager" id="writingPager">
             <span class="pager-label" id="writingPagerLabel">Task 1 of 2</span>
             <div class="pager-btns">
                 <button class="btn btn-pager btn-pager-prev" id="writingPrevBtn">← Previous</button>
@@ -318,8 +318,8 @@
     <div id="phase-review" class="phase">
         <div class="msg msg-success">Your original answers have been saved.</div>
         <div class="compare-grid">
-            <div class="col"><h4>Task 1 – Original</h4><div class="scroll-box" id="reviewOriginal1"></div></div>
-            <div class="col"><h4>Task 2 – Original</h4><div class="scroll-box" id="reviewOriginal2"></div></div>
+            <div class="col" id="reviewCol1"><h4>Task 1 – Original</h4><div class="scroll-box" id="reviewOriginal1"></div></div>
+            <div class="col" id="reviewCol2"><h4>Task 2 – Original</h4><div class="scroll-box" id="reviewOriginal2"></div></div>
         </div>
         <div style="margin-top:16px; display:flex; flex-wrap:wrap; gap:12px; justify-content:space-between; align-items:center;">
             <div>
@@ -342,7 +342,7 @@
             <span class="stats-badge" style="margin-left:auto;">Page exits: <span class="num" id="editingExitCount">0</span></span>
         </div>
 
-        <div class="task-pager">
+        <div class="task-pager" id="editingPager">
             <span class="pager-label" id="editingPagerLabel">Task 1 of 2</span>
             <div class="pager-btns">
                 <button class="btn btn-pager btn-pager-prev" id="editingPrevBtn">← Previous</button>
@@ -407,12 +407,12 @@
         </div>
 
         <div>
-            <h4 style="color:#0b1e33; margin-bottom:10px;">Task 1</h4>
+            <h4 id="completeTask1H" style="color:#0b1e33; margin-bottom:10px;">Task 1</h4>
             <div class="compare-grid" id="completeGrid1" style="margin-top:0;">
                 <div class="col"><h4>Original</h4><div class="scroll-box" id="completeOriginal1"></div></div>
                 <div class="col"><h4>Edited</h4><div class="scroll-box" id="completeEdited1"></div></div>
             </div>
-            <h4 style="color:#0b1e33; margin:20px 0 10px;">Task 2</h4>
+            <h4 id="completeTask2H" style="color:#0b1e33; margin:20px 0 10px;">Task 2</h4>
             <div class="compare-grid" id="completeGrid2" style="margin-top:0;">
                 <div class="col"><h4>Original</h4><div class="scroll-box" id="completeOriginal2"></div></div>
                 <div class="col"><h4>Edited</h4><div class="scroll-box" id="completeEdited2"></div></div>
