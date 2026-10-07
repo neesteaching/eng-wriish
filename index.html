@@ -215,11 +215,11 @@
         <div class="form-row" style="justify-content:center;">
             <div class="form-group" style="text-align:left;">
                 <label for="studentName">Full Name</label>
-                <input type="text" id="studentName" placeholder="e.g. Maria Chen" autocomplete="off" />
+                <input type="text" id="studentName" autocomplete="off" />
             </div>
             <div class="form-group" style="text-align:left;">
                 <label for="assignCode">Assignment Code</label>
-                <input type="text" id="assignCode" class="code-input" placeholder="e.g. AC-SEPT1" autocomplete="off" />
+                <input type="text" id="assignCode" class="code-input" autocomplete="off" />
             </div>
             <div class="form-group" style="text-align:left;">
                 <label for="classPassword">Class Password</label>
@@ -244,13 +244,13 @@
             <span class="label">Read</span><span id="readingTimeDisplay">3:00</span>
         </div>
         <div class="msg msg-info" id="readingInfoLine">Read both tasks carefully. You may start writing early.</div>
-        <div class="question-block" style="border-left-color:#1a7a4a;">
-            <div class="q-label" style="background:#1a7a4a;">Task 1</div>
+        <div class="question-block">
+            <div class="q-label">Task 1</div>
             <div id="questionTextReading1"></div>
             <div class="task-note" id="minWordsReading1"></div>
         </div>
-        <div class="question-block" style="border-left-color:#9c6a1a;">
-            <div class="q-label" style="background:#9c6a1a;">Task 2</div>
+        <div class="question-block">
+            <div class="q-label">Task 2</div>
             <div id="questionTextReading2"></div>
             <div class="task-note" id="minWordsReading2"></div>
         </div>
@@ -282,8 +282,8 @@
         <div class="task-section active-view" id="writingTask1">
             <div class="task-row">
                 <div class="question-col">
-                    <div class="question-block" style="border-left-color:#1a7a4a;">
-                        <div class="q-label" style="background:#1a7a4a;">Task 1</div>
+                    <div class="question-block">
+                        <div class="q-label">Task 1</div>
                         <div id="questionTextWriting1"></div>
                         <div class="task-note" id="minWordsWriting1"></div>
                     </div>
@@ -298,8 +298,8 @@
         <div class="task-section" id="writingTask2">
             <div class="task-row">
                 <div class="question-col">
-                    <div class="question-block" style="border-left-color:#9c6a1a;">
-                        <div class="q-label" style="background:#9c6a1a;">Task 2</div>
+                    <div class="question-block">
+                        <div class="q-label">Task 2</div>
                         <div id="questionTextWriting2"></div>
                         <div class="task-note" id="minWordsWriting2"></div>
                     </div>
@@ -353,8 +353,8 @@
         <div class="task-section active-view" id="editingTask1">
             <div class="task-row">
                 <div class="question-col">
-                    <div class="question-block" style="border-left-color:#1a7a4a;">
-                        <div class="q-label" style="background:#1a7a4a;">Task 1</div>
+                    <div class="question-block">
+                        <div class="q-label">Task 1</div>
                         <div id="questionTextEditing1"></div>
                         <div class="task-note" id="minWordsEditing1"></div>
                     </div>
@@ -369,8 +369,8 @@
         <div class="task-section" id="editingTask2">
             <div class="task-row">
                 <div class="question-col">
-                    <div class="question-block" style="border-left-color:#9c6a1a;">
-                        <div class="q-label" style="background:#9c6a1a;">Task 2</div>
+                    <div class="question-block">
+                        <div class="q-label">Task 2</div>
                         <div id="questionTextEditing2"></div>
                         <div class="task-note" id="minWordsEditing2"></div>
                     </div>
@@ -408,12 +408,12 @@
 
         <div>
             <h4 style="color:#0b1e33; margin-bottom:10px;">Task 1</h4>
-            <div class="compare-grid" style="margin-top:0;">
+            <div class="compare-grid" id="completeGrid1" style="margin-top:0;">
                 <div class="col"><h4>Original</h4><div class="scroll-box" id="completeOriginal1"></div></div>
                 <div class="col"><h4>Edited</h4><div class="scroll-box" id="completeEdited1"></div></div>
             </div>
             <h4 style="color:#0b1e33; margin:20px 0 10px;">Task 2</h4>
-            <div class="compare-grid" style="margin-top:0;">
+            <div class="compare-grid" id="completeGrid2" style="margin-top:0;">
                 <div class="col"><h4>Original</h4><div class="scroll-box" id="completeOriginal2"></div></div>
                 <div class="col"><h4>Edited</h4><div class="scroll-box" id="completeEdited2"></div></div>
             </div>
@@ -456,15 +456,26 @@
 //  Each entry is one test set. The KEY (e.g. "AC-SEPT1") is the
 //  assignment code you give to students.
 //
-//  To add a new test: copy an entire entry block, paste it below,
-//  change the key, title, questions, word minimums and timing.
-//  Set readingMin to 0 to skip the reading phase.
+//  ORGANIZATION:
+//    - Keep ACADEMIC tests under the ACADEMIC section, GENERAL TRAINING
+//      tests under the GENERAL TRAINING section.
+//    - Naming: AC-<name> for Academic, GT-<name> for General Training.
+//      Add -T1 or -T2 at the end for single-task tests (Task 1 only /
+//      Task 2 only). Academic Task 1 entries include the chart image;
+//      General Training entries normally have no image.
+//    - Suggested timing: full test 60/60, Task 1 only 20/20,
+//      Task 2 only 40/40 (writingMin / editingMin).
 //
-//  IMAGES: put the image file in the "images" folder next to index.html
-//  and reference it with a relative path, e.g.
-//      <img src="images/my-chart.png" alt="Bar chart" />
+//  To add a new test: copy an entire entry block, paste it into the
+//  right section, change the key, title, questions, word minimums
+//  and timing. Set readingMin to 0 to skip the reading phase.
+//  For a SINGLE-TASK test, simply leave out the task you don't want
+//  (see AC-SEPT1-T1 / AC-SEPT1-T2 below) — the page adapts itself.
+//
+//  IMAGES: upload the image file to the repo, right next to index.html
+//  (no subfolders needed), and reference it by filename, e.g.
+//      <img src="my-chart.png" alt="Bar chart" />
 //  Do NOT hotlink images from other websites — those links break.
-//  Keep the file's own images/ folder in sync when you update the site.
 //
 //  Template:
 //  "NEW-CODE": {
@@ -477,6 +488,9 @@
 //  },
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 const QUESTION_BANK = {
+    // ══════════════════════════════════════════════════════
+    //  ACADEMIC — Task 1 entries include the chart image
+    // ══════════════════════════════════════════════════════
     "AC-SEPT1": {
         title: "IELTS Academic Writing Test",
         readingMin: 0,
@@ -486,7 +500,7 @@ const QUESTION_BANK = {
             minWords: 150,
             html: `
                 <p><strong>The table shows the Proportions of Pupils Attending Four Secondary School Types Between 2000 and 2009. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.</strong></p>
-                <img src="images/ac-sept1-task1.png" alt="Table chart" />
+                <img src="ac-sept1-task1.png" alt="Table chart" />
             `
         },
         task2: {
@@ -494,6 +508,35 @@ const QUESTION_BANK = {
             html: `<p>The crime rate nowadays is decreasing compared to the past due to advances in technology. To what extent do you agree or disagree?</p>`
         }
     },
+    "AC-SEPT1-T1": {
+        title: "IELTS Academic Writing — Task 1 Only",
+        readingMin: 0,
+        writingMin: 20,
+        editingMin: 20,
+        task1: {
+            minWords: 150,
+            html: `
+                <p><strong>The table shows the Proportions of Pupils Attending Four Secondary School Types Between 2000 and 2009. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.</strong></p>
+                <img src="ac-sept1-task1.png" alt="Table chart" />
+            `
+        }
+        // no task2 → students only do Task 1
+    },
+    "AC-SEPT1-T2": {
+        title: "IELTS Academic Writing — Task 2 Only",
+        readingMin: 0,
+        writingMin: 40,
+        editingMin: 40,
+        task2: {
+            minWords: 250,
+            html: `<p>The crime rate nowadays is decreasing compared to the past due to advances in technology. To what extent do you agree or disagree?</p>`
+        }
+        // no task1 → students only do Task 2
+    },
+
+    // ══════════════════════════════════════════════════════
+    //  GENERAL TRAINING — normally no chart images here
+    // ══════════════════════════════════════════════════════
     "GT-SEPT1": {
         title: "VSTEP Writing Test",
         readingMin: 3,
@@ -716,15 +759,35 @@ function updateQuestionDisplays(test) {
     $('mainTitle').textContent = test.title;
     codeBadge.textContent = test.code;
     codeBadge.style.display = '';
-    [['Reading', test], ['Writing', test], ['Editing', test]].forEach(([prefix]) => {
-        $('questionText' + prefix + '1').innerHTML = test.task1.html;
-        $('questionText' + prefix + '2').innerHTML = test.task2.html;
-        $('minWords' + prefix + '1').textContent = `Write at least ${test.task1.minWords} words.`;
-        $('minWords' + prefix + '2').textContent = `Write at least ${test.task2.minWords} words.`;
+    const t1 = !!test.task1, t2 = !!test.task2;
+    ['Reading', 'Writing', 'Editing'].forEach(prefix => {
+        if (t1) {
+            $('questionText' + prefix + '1').innerHTML = test.task1.html;
+            $('minWords' + prefix + '1').textContent = `Write at least ${test.task1.minWords} words.`;
+        }
+        if (t2) {
+            $('questionText' + prefix + '2').innerHTML = test.task2.html;
+            $('minWords' + prefix + '2').textContent = `Write at least ${test.task2.minWords} words.`;
+        }
     });
-    $('readingInfoLine').textContent = `Read both tasks carefully. You have ${test.readingMin} minute${test.readingMin === 1 ? '' : 's'}. You may start writing early.`;
-    $('writingInfoLine').textContent = `Complete both tasks in ${test.writingMin} minutes. Your work auto-saves as you type. You may submit early.`;
-    $('editingSummaryLine').textContent = `You will have ${test.editingMin} minutes to edit both answers.`;
+    $('readingQBlock1').style.display = t1 ? '' : 'none';
+    $('readingQBlock2').style.display = t2 ? '' : 'none';
+    const taskWord = (t1 && t2) ? 'both tasks' : 'the task';
+    const taskWord2 = (t1 && t2) ? 'both tasks' : 'your answer';
+    $('readingInfoLine').textContent = `Read ${taskWord2} carefully. You have ${test.readingMin} minute${test.readingMin === 1 ? '' : 's'}. You may start writing early.`;
+    $('writingInfoLine').textContent = `Complete ${taskWord} in ${test.writingMin} minutes. Your work auto-saves as you type. You may submit early.`;
+    $('editingSummaryLine').textContent = `You will have ${test.editingMin} minutes to edit ${taskWord2}.`;
+}
+
+// Shows the Task 1/Task 2 pager only when the test has both tasks;
+// otherwise shows the single assigned task directly.
+function layoutTasks(prefix, state, viewKey) {
+    const test = ACTIVE_TEST;
+    const t1 = !!test.task1, t2 = !!test.task2;
+    $(prefix + 'Pager').style.display = (t1 && t2) ? '' : 'none';
+    if (t1 && t2) { renderTaskView(prefix, state[viewKey] || 1); return; }
+    $(prefix + 'Task1').classList.toggle('active-view', t1);
+    $(prefix + 'Task2').classList.toggle('active-view', t2);
 }
 function getTest(code) {
     const t = QUESTION_BANK[code];
@@ -840,10 +903,10 @@ function sendSubmissionEmail(state, submissionType) {
         test_code: state.testCode || '—',
         test_title: state.testTitle || '—',
         timestamp: getCurrentTimestamp(),
-        task1_original: state.task1Original || '(No answer)',
-        task2_original: state.task2Original || '(No answer)',
-        task1_edited: state.task1Edited || '(No edit)',
-        task2_edited: state.task2Edited || '(No edit)',
+        task1_original: !ACTIVE_TEST.task1 ? '(not assigned)' : (state.task1Original || '(No answer)'),
+        task2_original: !ACTIVE_TEST.task2 ? '(not assigned)' : (state.task2Original || '(No answer)'),
+        task1_edited: !ACTIVE_TEST.task1 ? '(not assigned)' : (state.task1Edited || '(No edit)'),
+        task2_edited: !ACTIVE_TEST.task2 ? '(not assigned)' : (state.task2Edited || '(No edit)'),
         submissionType: submissionType,
         to_email: EMAILJS_CONFIG.toEmail,
         reading_time: formatTime(state.readingElapsed || 0),
@@ -870,14 +933,14 @@ function sendSubmissionEmail(state, submissionType) {
 
 function sendEmailIfNeeded(state, phase) {
     if (phase === 'writing' && !state.emailSentWriting) {
-        const hasContent = (state.task1Original || '').trim() || (state.task2Original || '').trim();
+        const hasContent = (ACTIVE_TEST.task1 && (state.task1Original || '').trim()) || (ACTIVE_TEST.task2 && (state.task2Original || '').trim());
         if (!hasContent) return Promise.resolve();
         state.emailSentWriting = true;
         saveState(state);
         return sendSubmissionEmail(state, 'Writing phase completed').catch(err => console.warn('Email failed, continuing:', err));
     }
     if (phase === 'editing' && !state.emailSentEditing) {
-        const hasContent = (state.task1Edited || '').trim() || (state.task2Edited || '').trim();
+        const hasContent = (ACTIVE_TEST.task1 && (state.task1Edited || '').trim()) || (ACTIVE_TEST.task2 && (state.task2Edited || '').trim());
         if (!hasContent) return Promise.resolve();
         state.emailSentEditing = true;
         saveState(state);
@@ -964,7 +1027,7 @@ function setupWritingPhase(state) {
     wordCountWriting2.textContent = wordCount(writingArea2.value) + ' words';
     writingExitCountEl.textContent = state.writingExitCount || 0;
     updateQuestionDisplays(ACTIVE_TEST);
-    renderTaskView('writing', state.writingTaskView || 1);
+    layoutTasks('writing', state, 'writingTaskView');
 
     writingArea1.oninput = () => { const s = loadState(); s.task1Original = writingArea1.value; saveState(s); wordCountWriting1.textContent = wordCount(writingArea1.value) + ' words'; autoExpand(writingArea1); };
     writingArea2.oninput = () => { const s = loadState(); s.task2Original = writingArea2.value; saveState(s); wordCountWriting2.textContent = wordCount(writingArea2.value) + ' words'; autoExpand(writingArea2); };
@@ -976,8 +1039,8 @@ function setupWritingPhase(state) {
 
 function finishWriting(s) {
     s.writingDone = true;
-    s.task1Original = writingArea1.value;
-    s.task2Original = writingArea2.value;
+    if (ACTIVE_TEST.task1) s.task1Original = writingArea1.value;
+    if (ACTIVE_TEST.task2) s.task2Original = writingArea2.value;
     s.originalSaved = true;
     s.writingElapsed = getElapsed(s.writingStart);
     detachAwayTracking(); stopCheckpoints();
@@ -1002,8 +1065,11 @@ function goToReview(state) {
     if (!state.writingElapsed) state.writingElapsed = getElapsed(state.writingStart);
     saveState(state); clearTimers(); detachAwayTracking(); stopCheckpoints();
     showPhase('phase-review');
-    reviewOriginal1.textContent = state.task1Original || '(No Task 1 answer was written.)';
-    reviewOriginal2.textContent = state.task2Original || '(No Task 2 answer was written.)';
+    const rt1 = !!ACTIVE_TEST.task1, rt2 = !!ACTIVE_TEST.task2;
+    $('reviewCol1').style.display = rt1 ? '' : 'none';
+    $('reviewCol2').style.display = rt2 ? '' : 'none';
+    if (rt1) reviewOriginal1.textContent = state.task1Original || '(No Task 1 answer was written.)';
+    if (rt2) reviewOriginal2.textContent = state.task2Original || '(No Task 2 answer was written.)';
     const test = ACTIVE_TEST;
     reviewTimeTaken.textContent = formatTime(state.writingElapsed || 0) + ' (' + formatTimeShort(state.writingElapsed || 0) + ')';
     reviewExitCount.textContent = state.writingExitCount || 0;
@@ -1017,7 +1083,7 @@ function setupEditingPhase(state) {
     wordCountEditing2.textContent = wordCount(editingArea2.value) + ' words';
     editingExitCountEl.textContent = state.editingExitCount || 0;
     updateQuestionDisplays(ACTIVE_TEST);
-    renderTaskView('editing', state.editingTaskView || 1);
+    layoutTasks('editing', state, 'editingTaskView');
 
     editingArea1.oninput = () => { const s = loadState(); s.task1Edited = editingArea1.value; saveState(s); wordCountEditing1.textContent = wordCount(editingArea1.value) + ' words'; autoExpand(editingArea1); };
     editingArea2.oninput = () => { const s = loadState(); s.task2Edited = editingArea2.value; saveState(s); wordCountEditing2.textContent = wordCount(editingArea2.value) + ' words'; autoExpand(editingArea2); };
@@ -1029,8 +1095,8 @@ function setupEditingPhase(state) {
 
 function finishEditing(s) {
     s.editingDone = true;
-    s.task1Edited = editingArea1.value;
-    s.task2Edited = editingArea2.value;
+    if (ACTIVE_TEST.task1) s.task1Edited = editingArea1.value;
+    if (ACTIVE_TEST.task2) s.task2Edited = editingArea2.value;
     s.editedSaved = true;
     s.editingElapsed = getElapsed(s.editingStart);
     detachAwayTracking(); stopCheckpoints();
@@ -1060,10 +1126,17 @@ function goToComplete(state) {
     saveState(state);
     showPhase('phase-complete');
 
-    completeOriginal1.textContent = state.task1Original || '(No Task 1 original)';
-    completeOriginal2.textContent = state.task2Original || '(No Task 2 original)';
-    completeEdited1.textContent = state.task1Edited || '(No Task 1 edit)';
-    completeEdited2.textContent = state.task2Edited || '(No Task 2 edit)';
+    const ct1 = !!ACTIVE_TEST.task1, ct2 = !!ACTIVE_TEST.task2;
+    ['completeTask1H', 'completeGrid1'].forEach(id => $(id).style.display = ct1 ? '' : 'none');
+    ['completeTask2H', 'completeGrid2'].forEach(id => $(id).style.display = ct2 ? '' : 'none');
+    if (ct1) {
+        completeOriginal1.textContent = state.task1Original || '(No Task 1 original)';
+        completeEdited1.textContent = state.task1Edited || '(No Task 1 edit)';
+    }
+    if (ct2) {
+        completeOriginal2.textContent = state.task2Original || '(No Task 2 original)';
+        completeEdited2.textContent = state.task2Edited || '(No Task 2 edit)';
+    }
     completeName.textContent = state.name || '—';
     completeTestTitle.textContent = (state.testCode || '') + (state.testTitle ? ' — ' + state.testTitle : '');
 
@@ -1170,7 +1243,6 @@ function startFresh(test, name) {
     const state = enterTest(test.code, name, fresh);
     [writingArea1, writingArea2, editingArea1, editingArea2].forEach(ta => { ta.value = ''; });
     writingExitCountEl.textContent = '0'; editingExitCountEl.textContent = '0';
-    renderTaskView('writing', 1); renderTaskView('editing', 1);
     if (test.readingMin > 0) goToReading(state); else goToWriting(state);
 }
 
