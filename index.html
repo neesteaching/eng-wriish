@@ -1,0 +1,1296 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>IELTS Writing Test Platform</title>
+
+<!-- EmailJS (sends finished submissions to the teacher) -->
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+<!-- Typography: Montserrat for interface, EB Garamond for test content, IBM Plex Mono for timer/codes (matches thuy-dau.weebly.com) -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+
+<style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+        --ink: #333333;
+        --primary: #8273da;
+        --primary-dark: #6f61c6;
+        --primary-hover: #9487df;
+        --primary-deep: #272727;
+        --lavender: #f5f3fe;
+        --lavender-line: #ddd5f6;
+        --input-line: #cccccc;
+        --muted: #767676;
+        --danger: #a01e2e;
+        --success: #1e7a46;
+    }
+    body {
+        font-family: 'Montserrat', 'Segoe UI', Roboto, system-ui, -apple-system, sans-serif;
+        background: #ffffff;
+        color: var(--ink);
+        min-height: 100vh;
+        display: flex;
+        align-items: flex-start;
+        justify-content: center;
+        padding: 28px 20px;
+        user-select: none;
+    }
+    textarea, input { user-select: text; }
+    #app {
+        max-width: 1440px;
+        width: 100%;
+        background: #ffffff;
+        border: 1px solid #e3e3e3;
+        border-radius: 4px;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        padding: 32px 36px 36px;
+        position: relative;
+    }
+    @media (max-width: 700px) { #app { padding: 22px 16px 28px; border-radius: 4px; } }
+
+    .app-header {
+        display: flex; justify-content: space-between; align-items: center;
+        flex-wrap: wrap; gap: 12px; margin-bottom: 22px; padding-bottom: 14px;
+        border-bottom: 1px solid var(--lavender-line);
+    }
+    .app-header h1 { font-family: 'Montserrat', sans-serif; font-size: 18px; font-weight: 800; text-transform: uppercase; letter-spacing: 1.2px; background: #272727; color: #ffffff; padding: 8px 14px; border-radius: 2px; }
+    .app-header .header-right { display: flex; align-items: center; gap: 8px; }
+    .badge {
+        background: var(--lavender); color: #5a4fc0; border: 1px solid var(--lavender-line);
+        font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.1px;
+        padding: 5px 10px; border-radius: 2px;
+    }
+    .badge-code { background: var(--primary-deep); color: #fff; border-color: var(--primary-deep); font-family: 'IBM Plex Mono', ui-monospace, monospace; letter-spacing: 1px; }
+
+    .phase { display: none; animation: fadeUp .3s ease; }
+    .phase.active { display: block; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+    .timer-box {
+        background: #272727; color: #fff; border: 1px solid #1a1a1a; border-radius: 4px;
+        padding: 10px 20px; display: inline-flex; align-items: center; gap: 12px;
+        font-size: 26px; font-weight: 650; font-variant-numeric: tabular-nums;
+        letter-spacing: 1px; margin-bottom: 16px; flex-wrap: wrap;
+    }
+    .timer-box .label { font-size: 12px; font-weight: 600; text-transform: uppercase; letter-spacing: 1.6px; opacity: .65; }
+    .timer-box.warning { background: var(--danger); border-color: #6e1420; }
+    #readingTimeDisplay, #writingTimeDisplay, #editingTimeDisplay { font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace; font-weight: 600; }
+    .timer-box .elapsed-info { font-family: 'IBM Plex Mono', ui-monospace, SFMono-Regular, monospace; font-size: 13px; font-weight: 400; opacity: .6; margin-left: 8px; padding-left: 12px; border-left: 1px solid rgba(255,255,255,.25); }
+
+    .msg { padding: 12px 16px; border-radius: 2px; font-size: 14px; margin-bottom: 16px; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; border: 1px solid; }
+    .msg-info { background: #f1edfd; color: #3f3480; border-color: #d5c9f5; }
+    .msg-success { background: #e9f6ee; color: #14532d; border-color: #bfe3cd; }
+    .msg-warning { background: #fdf3e3; color: #7a4a12; border-color: #eed3a8; }
+    .msg-error { background: #fdeeee; color: #8a1f2b; border-color: #f0c0c6; display: none; }
+
+    .question-block { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; background: #faf8ff; border: 1px solid var(--lavender-line); border-left: 3px solid var(--primary); padding: 14px 18px; border-radius: 3px; font-size: 16px; line-height: 1.65; color: var(--ink); margin-bottom: 14px; }
+    .question-block .q-label { display: inline-block; background: var(--primary); color: #fff; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; padding: 3px 9px; border-radius: 2px; margin-bottom: 8px; }
+    .question-block .task-note { font-size: 13px; color: var(--muted); margin-top: 8px; font-style: italic; }
+    .question-block ul { margin: 6px 0 6px 20px; }
+    .question-block p { margin-bottom: 6px; }
+    .question-block img { max-width: 100%; height: auto; margin-top: 10px; border: 1px solid var(--lavender-line); border-radius: 2px; }
+
+    .task-pager { display: flex; align-items: center; justify-content: space-between; margin-bottom: 14px; }
+    .task-pager .pager-label { font-weight: 700; color: var(--primary-deep); font-size: 15px; }
+    .task-pager .pager-btns { display: flex; gap: 8px; }
+
+    .task-section { display: none; }
+    .task-section.active-view { display: block; }
+    .task-row { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; align-items: start; }
+    @media (max-width: 850px) { .task-row { grid-template-columns: 1fr; } }
+    .question-col { position: sticky; top: 12px; }
+    @media (max-width: 850px) { .question-col { position: static; } }
+    .task-header { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 8px; }
+    .task-header .task-title { font-weight: 650; color: var(--primary-deep); font-size: 16px; }
+    .task-header .word-count { font-size: 13px; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+    .answer-area {
+        width: 100%; min-height: 50vh; height: auto; padding: 14px 16px; font-size: 16px; line-height: 1.7;
+        font-family: inherit; border: 1.5px solid var(--input-line); border-radius: 2px; resize: none;
+        background: #fff; color: var(--ink); margin-bottom: 4px; overflow-y: hidden;
+    }
+    .answer-area:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(130, 115, 218, 0.16); }
+
+    .btn {
+        background: var(--primary); color: #fff; border: 1px solid var(--primary-dark); padding: 12px 26px; border-radius: 2px;
+        font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; cursor: pointer; font-family: inherit;
+        display: inline-flex; align-items: center; gap: 8px;
+    }
+    .btn:hover:not(:disabled) { background: var(--primary-hover); }
+    .btn-secondary { background: #3f3f3f; color: #fff; border-color: #2b2b2b; }
+    .btn-secondary:hover:not(:disabled) { background: var(--primary); border-color: var(--primary-dark); }
+    .btn-success { background: var(--success); border-color: #155e37; }
+    .btn-success:hover:not(:disabled) { background: #186a3c; }
+    .btn-danger { background: var(--danger); border-color: #7c1622; }
+    .btn-danger:hover:not(:disabled) { background: #8a1a28; }
+    .btn-sm { padding: 7px 14px; font-size: 12.5px; }
+    .btn:disabled { opacity: .45; cursor: not-allowed; }
+    .btn-pager { padding: 11px 22px; font-size: 14px; font-weight: 700; }
+    .btn-pager-prev { background: #fff; color: #272727; border: 1.5px solid #272727; }
+    .btn-pager-prev:hover:not(:disabled) { background: var(--lavender); }
+
+    .form-row { display: flex; flex-wrap: wrap; gap: 16px; margin-bottom: 18px; }
+    .form-group { flex: 1 1 260px; max-width: 400px; display: flex; flex-direction: column; gap: 6px; }
+    .form-group label { font-size: 12px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.8px; color: #272727; }
+    .form-group input {
+        padding: 11px 14px; border: 1.5px solid var(--input-line); border-radius: 2px; font-size: 15px;
+        font-family: inherit; background: #fff; color: var(--ink);
+    }
+    .form-group input:focus { border-color: var(--primary); outline: none; box-shadow: 0 0 0 3px rgba(130, 115, 218, 0.16); }
+    .form-group input.code-input { text-transform: uppercase; font-family: 'IBM Plex Mono', ui-monospace, monospace; letter-spacing: 2px; font-weight: 700; }
+
+    .flex-center { display: flex; justify-content: center; gap: 12px; flex-wrap: wrap; }
+    .text-sm { font-size: 14px; color: var(--muted); }
+    .text-muted { color: var(--muted); }
+    .mt-12 { margin-top: 12px; } .mt-20 { margin-top: 20px; }
+    .mb-12 { margin-bottom: 12px; } .mb-20 { margin-bottom: 20px; }
+
+    .scroll-box {
+        font-family: 'EB Garamond', Georgia, 'Times New Roman', serif;
+        max-height: 220px; overflow-y: auto; border: 1px solid var(--lavender-line); border-radius: 3px;
+        padding: 12px 16px; background: #faf8ff; white-space: pre-wrap; font-size: 16.5px; line-height: 1.7;
+    }
+    .compare-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-top: 18px; }
+    @media (max-width: 700px) { .compare-grid { grid-template-columns: 1fr; gap: 14px; } }
+    .compare-grid .col h4 { color: var(--primary-deep); margin-bottom: 6px; font-size: 14px; }
+
+    .stats-badge { display: inline-flex; align-items: center; gap: 6px; background: var(--lavender); border: 1px solid var(--lavender-line); padding: 4px 10px; border-radius: 2px; font-size: 12.5px; color: var(--primary-dark); font-weight: 500; }
+    .stats-badge .num { color: var(--danger); font-weight: 700; font-variant-numeric: tabular-nums; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px,1fr)); gap: 10px; margin: 16px 0 22px; }
+    .stat-card { background: #fff; border: 1px solid var(--lavender-line); border-radius: 4px; padding: 12px 14px; }
+    .stat-card .stat-label { font-size: 11px; color: var(--muted); text-transform: uppercase; letter-spacing: 1px; margin-bottom: 4px; font-weight: 600; }
+    .stat-card .stat-value { font-size: 19px; font-weight: 700; color: var(--primary-deep); font-variant-numeric: tabular-nums; }
+
+    .checkpoint-list { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+    .checkpoint-chip { background: var(--lavender); border: 1px solid var(--lavender-line); color: var(--primary-dark); font-size: 12px; padding: 3px 10px; border-radius: 2px; font-variant-numeric: tabular-nums; }
+
+    .attempts-wrap { max-width: 640px; margin: 24px auto 0; text-align: left; }
+    .attempts-wrap h3 { font-size: 14px; color: var(--primary-deep); margin-bottom: 10px; text-transform: uppercase; letter-spacing: 1px; }
+    .attempt-item {
+        display: flex; align-items: center; gap: 12px; flex-wrap: wrap;
+        background: #faf8ff; border: 1px solid var(--lavender-line); border-radius: 4px;
+        padding: 11px 14px; margin-bottom: 8px;
+    }
+    .attempt-item .who { font-weight: 650; color: var(--primary-deep); font-size: 14px; }
+    .attempt-item .meta { font-size: 13px; color: var(--muted); }
+    .attempt-item .spacer { flex: 1; }
+    .status-dot { width: 9px; height: 9px; border-radius: 50%; display: inline-block; margin-right: 6px; }
+    .status-progress { background: #c07f13; }
+    .status-done { background: var(--success); }
+
+    #creditFooter { text-align: center; font-size: 13px; color: #8a829e; margin-top: 26px; padding-top: 14px; border-top: 1px solid var(--lavender-line); }
+    #creditFooter a { color: var(--primary); text-decoration: none; }
+    #creditFooter a:hover { text-decoration: underline; }
+
+    @media (max-width: 480px) {
+        .timer-box { font-size: 21px; padding: 8px 14px; }
+        .btn { padding: 11px 20px; font-size: 14px; width: 100%; justify-content: center; }
+        .flex-center { flex-direction: column; align-items: stretch; }
+        .app-header h1 { font-size: 17px; }
+        .answer-area { min-height: 38vh; }
+    }
+</style>
+</head>
+<body>
+
+<div id="app">
+
+    <div class="app-header">
+        <h1 id="mainTitle">IELTS Writing Test Platform</h1>
+        <div class="header-right">
+            <span class="badge badge-code" id="codeBadge" style="display:none;"></span>
+            <span class="badge" id="phaseBadge">Ready</span>
+        </div>
+    </div>
+
+    <!-- PHASE 0: HOME / INPUT -->
+    <div id="phase-input" class="phase active" style="max-width:460px; margin:0 auto; text-align:center;">
+        <p class="text-sm mb-20">Enter your name and the assignment code your teacher gave you.</p>
+        <div class="msg msg-error" id="codeError"></div>
+        <div class="form-row" style="justify-content:center;">
+            <div class="form-group" style="text-align:left;">
+                <label for="studentName">Full Name</label>
+                <input type="text" id="studentName" placeholder="e.g. Maria Chen" autocomplete="off" />
+            </div>
+            <div class="form-group" style="text-align:left;">
+                <label for="assignCode">Assignment Code</label>
+                <input type="text" id="assignCode" class="code-input" placeholder="e.g. AC-SEPT1" autocomplete="off" />
+            </div>
+            <div class="form-group" style="text-align:left;">
+                <label for="classPassword">Class Password</label>
+                <input type="password" id="classPassword" placeholder="Given by your teacher" autocomplete="off" />
+            </div>
+        </div>
+        <div class="flex-center">
+            <button class="btn" id="btnStart">Start / Resume Test</button>
+        </div>
+        <p class="text-sm text-muted mt-12" style="text-align:center;" id="timingSummary"></p>
+
+        <div class="attempts-wrap" id="attemptsWrap" style="display:none;">
+            <h3>Continue on this device</h3>
+            <div id="attemptsList"></div>
+        </div>
+
+    </div>
+
+    <!-- PHASE 1: READING (only for tests with readingMin > 0) -->
+    <div id="phase-reading" class="phase">
+        <div class="timer-box" id="readingTimerBox">
+            <span class="label">Read</span><span id="readingTimeDisplay">3:00</span>
+        </div>
+        <div class="msg msg-info" id="readingInfoLine">Read both tasks carefully. You may start writing early.</div>
+        <div class="question-block" style="border-left-color:#1a7a4a;">
+            <div class="q-label" style="background:#1a7a4a;">Task 1</div>
+            <div id="questionTextReading1"></div>
+            <div class="task-note" id="minWordsReading1"></div>
+        </div>
+        <div class="question-block" style="border-left-color:#9c6a1a;">
+            <div class="q-label" style="background:#9c6a1a;">Task 2</div>
+            <div id="questionTextReading2"></div>
+            <div class="task-note" id="minWordsReading2"></div>
+        </div>
+        <div class="flex-center mt-20">
+            <button class="btn btn-success" id="btnStartWritingEarly">Start Writing Now</button>
+        </div>
+        <p class="text-sm text-muted mt-12" style="text-align:center;">The writing phase will begin automatically when the reading time ends.</p>
+    </div>
+
+    <!-- PHASE 2: WRITING -->
+    <div id="phase-writing" class="phase">
+        <div class="timer-box" id="writingTimerBox">
+            <span class="label">Write</span><span id="writingTimeDisplay">60:00</span>
+            <span class="elapsed-info" id="writingElapsedInfo">elapsed: 0:00</span>
+        </div>
+        <div class="msg msg-info">
+            <span id="writingInfoLine">Complete both tasks. Your work auto-saves as you type. You may submit early.</span>
+            <span class="stats-badge" style="margin-left:auto;">Page exits: <span class="num" id="writingExitCount">0</span></span>
+        </div>
+
+        <div class="task-pager">
+            <span class="pager-label" id="writingPagerLabel">Task 1 of 2</span>
+            <div class="pager-btns">
+                <button class="btn btn-pager btn-pager-prev" id="writingPrevBtn">← Previous</button>
+                <button class="btn btn-pager btn-pager-next" id="writingNextBtn">Next →</button>
+            </div>
+        </div>
+
+        <div class="task-section active-view" id="writingTask1">
+            <div class="task-row">
+                <div class="question-col">
+                    <div class="question-block" style="border-left-color:#1a7a4a;">
+                        <div class="q-label" style="background:#1a7a4a;">Task 1</div>
+                        <div id="questionTextWriting1"></div>
+                        <div class="task-note" id="minWordsWriting1"></div>
+                    </div>
+                </div>
+                <div class="answer-col">
+                    <div class="task-header"><span class="task-title">Task 1 Answer</span><span class="word-count" id="wordCountWriting1">0 words</span></div>
+                    <textarea class="answer-area" id="writingArea1" placeholder="Write your Task 1 answer here…"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="task-section" id="writingTask2">
+            <div class="task-row">
+                <div class="question-col">
+                    <div class="question-block" style="border-left-color:#9c6a1a;">
+                        <div class="q-label" style="background:#9c6a1a;">Task 2</div>
+                        <div id="questionTextWriting2"></div>
+                        <div class="task-note" id="minWordsWriting2"></div>
+                    </div>
+                </div>
+                <div class="answer-col">
+                    <div class="task-header"><span class="task-title">Task 2 Answer</span><span class="word-count" id="wordCountWriting2">0 words</span></div>
+                    <textarea class="answer-area" id="writingArea2" placeholder="Write your Task 2 answer here…"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex-center mt-20"><button class="btn btn-secondary" id="btnSubmitWriting">Submit Early</button></div>
+    </div>
+
+    <!-- PHASE 3: REVIEW -->
+    <div id="phase-review" class="phase">
+        <div class="msg msg-success">Your original answers have been saved.</div>
+        <div class="compare-grid">
+            <div class="col"><h4>Task 1 – Original</h4><div class="scroll-box" id="reviewOriginal1"></div></div>
+            <div class="col"><h4>Task 2 – Original</h4><div class="scroll-box" id="reviewOriginal2"></div></div>
+        </div>
+        <div style="margin-top:16px; display:flex; flex-wrap:wrap; gap:12px; justify-content:space-between; align-items:center;">
+            <div>
+                <span class="stats-badge">Time taken: <strong id="reviewTimeTaken">—</strong></span>
+                <span class="stats-badge" style="margin-left:8px;">Page exits: <strong id="reviewExitCount">0</strong></span>
+            </div>
+            <button class="btn btn-success" id="btnStartEditing">Start Editing</button>
+        </div>
+        <p class="text-sm text-muted mt-12" style="text-align:center;" id="editingSummaryLine"></p>
+    </div>
+
+    <!-- PHASE 4: EDITING -->
+    <div id="phase-editing" class="phase">
+        <div class="timer-box" id="editingTimerBox">
+            <span class="label">Edit</span><span id="editingTimeDisplay">60:00</span>
+            <span class="elapsed-info" id="editingElapsedInfo">elapsed: 0:00</span>
+        </div>
+        <div class="msg msg-warning">
+            Review and refine your answers. Your edits auto-save. You may finish early.
+            <span class="stats-badge" style="margin-left:auto;">Page exits: <span class="num" id="editingExitCount">0</span></span>
+        </div>
+
+        <div class="task-pager">
+            <span class="pager-label" id="editingPagerLabel">Task 1 of 2</span>
+            <div class="pager-btns">
+                <button class="btn btn-pager btn-pager-prev" id="editingPrevBtn">← Previous</button>
+                <button class="btn btn-pager btn-pager-next" id="editingNextBtn">Next →</button>
+            </div>
+        </div>
+
+        <div class="task-section active-view" id="editingTask1">
+            <div class="task-row">
+                <div class="question-col">
+                    <div class="question-block" style="border-left-color:#1a7a4a;">
+                        <div class="q-label" style="background:#1a7a4a;">Task 1</div>
+                        <div id="questionTextEditing1"></div>
+                        <div class="task-note" id="minWordsEditing1"></div>
+                    </div>
+                </div>
+                <div class="answer-col">
+                    <div class="task-header"><span class="task-title">Task 1 – Edit</span><span class="word-count" id="wordCountEditing1">0 words</span></div>
+                    <textarea class="answer-area" id="editingArea1" placeholder="Edit your Task 1 answer here…"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="task-section" id="editingTask2">
+            <div class="task-row">
+                <div class="question-col">
+                    <div class="question-block" style="border-left-color:#9c6a1a;">
+                        <div class="q-label" style="background:#9c6a1a;">Task 2</div>
+                        <div id="questionTextEditing2"></div>
+                        <div class="task-note" id="minWordsEditing2"></div>
+                    </div>
+                </div>
+                <div class="answer-col">
+                    <div class="task-header"><span class="task-title">Task 2 – Edit</span><span class="word-count" id="wordCountEditing2">0 words</span></div>
+                    <textarea class="answer-area" id="editingArea2" placeholder="Edit your Task 2 answer here…"></textarea>
+                </div>
+            </div>
+        </div>
+
+        <div class="flex-center mt-20"><button class="btn btn-secondary" id="btnSubmitEditing">Finish Editing Early</button></div>
+    </div>
+
+    <!-- PHASE 5: COMPLETE -->
+    <div id="phase-complete" class="phase">
+        <div class="msg msg-success" style="font-size:17px;">Test complete. Your submission has been emailed to your teacher.</div>
+
+        <div class="stats-grid">
+            <div class="stat-card"><div class="stat-label">Student</div><div class="stat-value" id="completeName" style="font-size:16px;">—</div></div>
+            <div class="stat-card"><div class="stat-label">Test</div><div class="stat-value" id="completeTestTitle" style="font-size:16px;">—</div></div>
+            <div class="stat-card"><div class="stat-label">Writing time</div><div class="stat-value" id="completeWritingTime" style="font-size:16px;">—</div></div>
+            <div class="stat-card"><div class="stat-label">Editing time</div><div class="stat-value" id="completeEditingTime" style="font-size:16px;">—</div></div>
+            <div class="stat-card"><div class="stat-label">Total page exits</div><div class="stat-value" id="completeExitTotal">0</div></div>
+            <div class="stat-card"><div class="stat-label">Time away from page</div><div class="stat-value" id="completeAwayTime" style="font-size:16px;">0:00</div></div>
+            <div class="stat-card"><div class="stat-label">Pastes into answer</div><div class="stat-value" id="completePasteCount">0</div></div>
+            <div class="stat-card"><div class="stat-label">Keystrokes (write)</div><div class="stat-value" id="completeKeystrokesW">0</div></div>
+            <div class="stat-card"><div class="stat-label">Keystrokes (edit)</div><div class="stat-value" id="completeKeystrokesE">0</div></div>
+        </div>
+
+        <div class="mb-20">
+            <h4 style="color:#0b1e33; margin-bottom:6px; font-size:14px;">Word count over time (writing phase)</h4>
+            <div class="checkpoint-list" id="checkpointList"></div>
+        </div>
+
+        <div>
+            <h4 style="color:#0b1e33; margin-bottom:10px;">Task 1</h4>
+            <div class="compare-grid" style="margin-top:0;">
+                <div class="col"><h4>Original</h4><div class="scroll-box" id="completeOriginal1"></div></div>
+                <div class="col"><h4>Edited</h4><div class="scroll-box" id="completeEdited1"></div></div>
+            </div>
+            <h4 style="color:#0b1e33; margin:20px 0 10px;">Task 2</h4>
+            <div class="compare-grid" style="margin-top:0;">
+                <div class="col"><h4>Original</h4><div class="scroll-box" id="completeOriginal2"></div></div>
+                <div class="col"><h4>Edited</h4><div class="scroll-box" id="completeEdited2"></div></div>
+            </div>
+        </div>
+
+        <div class="mt-20" style="background:#f0f6fe; border-radius:16px; padding:16px 22px;">
+            <p class="text-sm" id="emailStatusLine">Your answers have been emailed to your teacher.</p>
+        </div>
+
+        <div class="flex-center mt-20">
+            <button class="btn btn-secondary" id="btnHome">Back to Home</button>
+            <button class="btn btn-danger" id="btnRetake">Retake This Test</button>
+        </div>
+    </div>
+
+    <div id="creditFooter">
+        Credited to Thanh-Thuy Dau (<a href="mailto:thuydt.lacabine@gmail.com">thuydt.lacabine@gmail.com</a>)
+    </div>
+</div>
+
+<script>
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+//  COPY / DEVTOOLS DETERRENT (best-effort only)
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+(function blockCopyAndDevTools() {
+    document.addEventListener('contextmenu', e => e.preventDefault());
+    document.addEventListener('keydown', function (e) {
+        if (e.key === 'F12') { e.preventDefault(); return false; }
+        if (e.ctrlKey && (e.key === 'u' || e.key === 'U')) { e.preventDefault(); return false; }
+        if (e.ctrlKey && e.shiftKey && ['i', 'I', 'j', 'J', 'c', 'C'].includes(e.key)) { e.preventDefault(); return false; }
+        if (e.ctrlKey && (e.key === 's' || e.key === 'S')) { e.preventDefault(); return false; }
+        if (e.ctrlKey && (e.key === 'c' || e.key === 'C') && document.activeElement.tagName !== 'TEXTAREA' && document.activeElement.tagName !== 'INPUT') { e.preventDefault(); return false; }
+    });
+    console.log('%c Credited to Thanh-Thuy Dau (thuydt.lacabine@gmail.com) ', 'background:#0b1e33;color:#fff;font-size:14px;font-weight:bold;padding:6px 12px;border-radius:4px;');
+})();
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+//  QUESTION BANK — ★ TEACHERS: EDIT HERE TO ADD NEW TESTS ★
+//
+//  Each entry is one test set. The KEY (e.g. "AC-SEPT1") is the
+//  assignment code you give to students.
+//
+//  To add a new test: copy an entire entry block, paste it below,
+//  change the key, title, questions, word minimums and timing.
+//  Set readingMin to 0 to skip the reading phase.
+//
+//  IMAGES: put the image file in the "images" folder next to index.html
+//  and reference it with a relative path, e.g.
+//      <img src="images/my-chart.png" alt="Bar chart" />
+//  Do NOT hotlink images from other websites — those links break.
+//  Keep the file's own images/ folder in sync when you update the site.
+//
+//  Template:
+//  "NEW-CODE": {
+//      title: "Test title shown to students",
+//      readingMin: 0,
+//      writingMin: 60,
+//      editingMin: 60,
+//      task1: { minWords: 150, html: `...question HTML...` },
+//      task2: { minWords: 250, html: `...question HTML...` }
+//  },
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+const QUESTION_BANK = {
+    "AC-SEPT1": {
+        title: "IELTS Academic Writing Test",
+        readingMin: 0,
+        writingMin: 60,
+        editingMin: 60,
+        task1: {
+            minWords: 150,
+            html: `
+                <p><strong>The table shows the Proportions of Pupils Attending Four Secondary School Types Between 2000 and 2009. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.</strong></p>
+                <img src="images/ac-sept1-task1.png" alt="Table chart" />
+            `
+        },
+        task2: {
+            minWords: 250,
+            html: `<p>The crime rate nowadays is decreasing compared to the past due to advances in technology. To what extent do you agree or disagree?</p>`
+        }
+    },
+    "GT-SEPT1": {
+        title: "VSTEP Writing Test",
+        readingMin: 3,
+        writingMin: 60,
+        editingMin: 60,
+        task1: {
+            minWords: 120,
+            html: `
+                <p>You and some friends ate a meal at a restaurant to celebrate a special occasion, and you were very pleased with the food and service. Write a letter to the restaurant manager. In your letter:</p>
+                <p>- Give details of your visit to the restaurant</p>
+                <p>- Explain the reason for the celebration</p>
+                <p>- Say what was good about the food and the service</p>
+            `
+        },
+        task2: {
+            minWords: 250,
+            html: `<p>Nowadays we are producing more and more rubbish. Why do you think this is happening? What can governments do to help reduce the amount of rubbish produced?</p>`
+        }
+    }
+};
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+//  CLASS PASSWORD — students need this AND their assignment code
+//  to start a test. Change it to anything you like and share it
+//  with your class privately (not on the public page).
+//  Student links look like: https://YOUR-USERNAME.github.io/REPO/?code=AC-SEPT1
+//  NOTE: this keeps casual visitors out, but the password is visible
+//  in the page source to anyone who inspects it — it is a gate,
+//  not bank-grade security.
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+const SITE_PASSWORD = 'neeclasswriting-2026';
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+//  EMAILJS CONFIGURATION (public key — safe to keep client-side)
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+const EMAILJS_CONFIG = {
+    publicKey: 'FvCkbK4iKPbv3lKyO',
+    serviceID: 'ieltstask2',
+    templateID: 'template_iwdvq8k',
+    toEmail: 'thuydt.lacabine@gmail.com'
+};
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+//  STORAGE — one namespaced slot per (assignment code + student)
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+const PLATFORM_PREFIX = 'ielts_platform_v1';
+const INDEX_KEY = PLATFORM_PREFIX + '::attempts';
+
+let ATTEMPT_KEY = null;   // localStorage key of the active attempt
+let ACTIVE_TEST = null;   // QUESTION_BANK entry of the active attempt
+
+function slugify(s) { return (s || '').trim().toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '') || 'student'; }
+function attemptKey(code, name) { return PLATFORM_PREFIX + '::' + code + '::' + slugify(name); }
+
+function getDefaultState(code) {
+    const test = QUESTION_BANK[code];
+    return {
+        testCode: code,
+        testTitle: test ? test.title : '',
+        phase: 'input', name: '',
+        task1Original: '', task2Original: '', task1Edited: '', task2Edited: '',
+        readingStart: null, writingStart: null, editingStart: null,
+        readingDone: false, writingDone: false, editingDone: false,
+        originalSaved: false, editedSaved: false,
+        emailSentWriting: false, emailSentEditing: false,
+        readingElapsed: 0, writingElapsed: 0, editingElapsed: 0,
+        writingExitCount: 0, editingExitCount: 0,
+        writingExitEvents: [], editingExitEvents: [],
+        isAway: false, awayStart: null,
+        writingKeystrokes: 0, editingKeystrokes: 0,
+        writingPasteCount: 0, editingPasteCount: 0,
+        writingCheckpoints: [], editingCheckpoints: [],
+        writingTaskView: 1, editingTaskView: 1
+    };
+}
+
+function loadState() {
+    if (!ATTEMPT_KEY) return getDefaultState('');
+    try {
+        const raw = localStorage.getItem(ATTEMPT_KEY);
+        if (raw) {
+            const parsed = JSON.parse(raw);
+            const def = getDefaultState(parsed.testCode || '');
+            for (const k in def) if (!(k in parsed)) parsed[k] = def[k];
+            return parsed;
+        }
+    } catch (_) { /* ignore */ }
+    return getDefaultState('');
+}
+
+function saveState(state) {
+    if (!ATTEMPT_KEY) return;
+    try {
+        localStorage.setItem(ATTEMPT_KEY, JSON.stringify(state));
+        touchIndex(state);
+    } catch (_) { /* storage full / unavailable — test still works in memory */ }
+}
+
+function readIndex() {
+    try { return JSON.parse(localStorage.getItem(INDEX_KEY) || '[]'); }
+    catch (_) { return []; }
+}
+function writeIndex(list) {
+    try { localStorage.setItem(INDEX_KEY, JSON.stringify(list.slice(0, 60))); } catch (_) {}
+}
+function touchIndex(state) {
+    const list = readIndex().filter(e => e.key !== ATTEMPT_KEY);
+    list.unshift({ key: ATTEMPT_KEY, code: state.testCode, name: state.name, phase: state.phase, updatedAt: Date.now() });
+    writeIndex(list);
+}
+function removeFromIndex(key) {
+    writeIndex(readIndex().filter(e => e.key !== key));
+}
+
+// In-memory counters flushed periodically (avoids a localStorage write on every keystroke)
+let liveCounters = { writingKeystrokes: 0, writingPasteCount: 0, editingKeystrokes: 0, editingPasteCount: 0 };
+function flushCounters() {
+    if (!ATTEMPT_KEY) return loadState();
+    const s = loadState();
+    s.writingKeystrokes = (s.writingKeystrokes || 0) + liveCounters.writingKeystrokes;
+    s.writingPasteCount = (s.writingPasteCount || 0) + liveCounters.writingPasteCount;
+    s.editingKeystrokes = (s.editingKeystrokes || 0) + liveCounters.editingKeystrokes;
+    s.editingPasteCount = (s.editingPasteCount || 0) + liveCounters.editingPasteCount;
+    liveCounters = { writingKeystrokes: 0, writingPasteCount: 0, editingKeystrokes: 0, editingPasteCount: 0 };
+    saveState(s);
+    return s;
+}
+
+// ─── DOM refs ───
+const $ = id => document.getElementById(id);
+const phaseInput = $('phase-input'), phaseReading = $('phase-reading'), phaseWriting = $('phase-writing'),
+      phaseReview = $('phase-review'), phaseEditing = $('phase-editing'), phaseComplete = $('phase-complete');
+const allPhases = [phaseInput, phaseReading, phaseWriting, phaseReview, phaseEditing, phaseComplete];
+
+const studentName = $('studentName'), assignCode = $('assignCode'), classPassword = $('classPassword'), codeError = $('codeError');
+const btnStart = $('btnStart'), btnStartWritingEarly = $('btnStartWritingEarly'), btnStartEditing = $('btnStartEditing');
+const btnSubmitWriting = $('btnSubmitWriting'), btnSubmitEditing = $('btnSubmitEditing');
+const btnHome = $('btnHome'), btnRetake = $('btnRetake');
+
+const readingTimeDisplay = $('readingTimeDisplay'), writingTimeDisplay = $('writingTimeDisplay'), editingTimeDisplay = $('editingTimeDisplay');
+const writingElapsedInfo = $('writingElapsedInfo'), editingElapsedInfo = $('editingElapsedInfo');
+
+const writingArea1 = $('writingArea1'), writingArea2 = $('writingArea2'), editingArea1 = $('editingArea1'), editingArea2 = $('editingArea2');
+const wordCountWriting1 = $('wordCountWriting1'), wordCountWriting2 = $('wordCountWriting2'), wordCountEditing1 = $('wordCountEditing1'), wordCountEditing2 = $('wordCountEditing2');
+
+const reviewOriginal1 = $('reviewOriginal1'), reviewOriginal2 = $('reviewOriginal2'), reviewTimeTaken = $('reviewTimeTaken'), reviewExitCount = $('reviewExitCount');
+const completeOriginal1 = $('completeOriginal1'), completeOriginal2 = $('completeOriginal2'), completeEdited1 = $('completeEdited1'), completeEdited2 = $('completeEdited2');
+const completeName = $('completeName'), completeTestTitle = $('completeTestTitle'), completeWritingTime = $('completeWritingTime'), completeEditingTime = $('completeEditingTime');
+const completeExitTotal = $('completeExitTotal'), completeAwayTime = $('completeAwayTime'), completePasteCount = $('completePasteCount');
+const completeKeystrokesW = $('completeKeystrokesW'), completeKeystrokesE = $('completeKeystrokesE');
+const checkpointList = $('checkpointList'), emailStatusLine = $('emailStatusLine');
+
+const phaseBadge = $('phaseBadge'), codeBadge = $('codeBadge'), timingSummary = $('timingSummary');
+const attemptsWrap = $('attemptsWrap'), attemptsList = $('attemptsList');
+
+const writingExitCountEl = $('writingExitCount'), editingExitCountEl = $('editingExitCount');
+const writingPrevBtn = $('writingPrevBtn'), writingNextBtn = $('writingNextBtn'), writingPagerLabel = $('writingPagerLabel');
+const editingPrevBtn = $('editingPrevBtn'), editingNextBtn = $('editingNextBtn'), editingPagerLabel = $('editingPagerLabel');
+
+let timerIntervals = [];
+let checkpointInterval = null;
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+//  HELPERS
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function formatTime(seconds) {
+    if (seconds < 0) seconds = 0;
+    const m = Math.floor(seconds / 60), s = Math.floor(seconds % 60);
+    return `${String(m).padStart(2, '0')}:${String(s).padStart(2, '0')}`;
+}
+function formatTimeShort(seconds) {
+    if (seconds < 0) seconds = 0;
+    const m = Math.floor(seconds / 60), s = Math.floor(seconds % 60);
+    return m === 0 ? `${s}s` : `${m}m ${s}s`;
+}
+function wordCount(str) {
+    const clean = (str || '').trim();
+    return clean ? clean.split(/\s+/).length : 0;
+}
+function getCurrentTimestamp() {
+    return new Date().toLocaleString('en-US', { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit', second: '2-digit' });
+}
+function showPhase(id) {
+    allPhases.forEach(el => el.classList.remove('active'));
+    const target = document.getElementById(id);
+    if (target) target.classList.add('active');
+    const map = { 'phase-input': 'Ready', 'phase-reading': 'Reading', 'phase-writing': 'Writing', 'phase-review': 'Review', 'phase-editing': 'Editing', 'phase-complete': 'Complete' };
+    phaseBadge.textContent = map[id] || '—';
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+}
+function clearTimers() { timerIntervals.forEach(id => clearInterval(id)); timerIntervals = []; }
+function getRemaining(start, durationSec) { if (!start) return durationSec; return Math.max(0, durationSec - (Date.now() - start) / 1000); }
+function getElapsed(start) { return start ? (Date.now() - start) / 1000 : 0; }
+function checkpointsSummaryText(checkpoints) {
+    return (checkpoints || []).map(c => `${Math.round(c.atSec / 60)}m: ${c.words}w`).join(', ') || 'n/a';
+}
+function autoExpand(el) {
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = el.scrollHeight + 'px';
+}
+function timingText(t) {
+    const parts = [];
+    if (t.readingMin > 0) parts.push(`${t.readingMin} min reading`);
+    parts.push(`${t.writingMin} min writing`);
+    parts.push(`${t.editingMin} min editing`);
+    return parts.join(' → ');
+}
+function showCodeError(msg) {
+    codeError.textContent = msg;
+    codeError.style.display = msg ? 'flex' : 'none';
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+//  QUESTION DISPLAY
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function updateQuestionDisplays(test) {
+    if (!test) return;
+    document.title = test.title;
+    $('mainTitle').textContent = test.title;
+    codeBadge.textContent = test.code;
+    codeBadge.style.display = '';
+    [['Reading', test], ['Writing', test], ['Editing', test]].forEach(([prefix]) => {
+        $('questionText' + prefix + '1').innerHTML = test.task1.html;
+        $('questionText' + prefix + '2').innerHTML = test.task2.html;
+        $('minWords' + prefix + '1').textContent = `Write at least ${test.task1.minWords} words.`;
+        $('minWords' + prefix + '2').textContent = `Write at least ${test.task2.minWords} words.`;
+    });
+    $('readingInfoLine').textContent = `Read both tasks carefully. You have ${test.readingMin} minute${test.readingMin === 1 ? '' : 's'}. You may start writing early.`;
+    $('writingInfoLine').textContent = `Complete both tasks in ${test.writingMin} minutes. Your work auto-saves as you type. You may submit early.`;
+    $('editingSummaryLine').textContent = `You will have ${test.editingMin} minutes to edit both answers.`;
+}
+function getTest(code) {
+    const t = QUESTION_BANK[code];
+    if (!t) return null;
+    return Object.assign({ code }, t);
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+//  TASK PAGER (Task 1 / Task 2 sub-screens)
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function renderTaskView(prefix, view) {
+    $(prefix + 'Task1').classList.toggle('active-view', view === 1);
+    $(prefix + 'Task2').classList.toggle('active-view', view === 2);
+    $(prefix + 'PagerLabel').textContent = `Task ${view} of 2`;
+    $(prefix + 'PrevBtn').disabled = view === 1;
+    $(prefix + 'NextBtn').disabled = view === 2;
+    const area = $((prefix === 'writing' ? 'writingArea' : 'editingArea') + view);
+    requestAnimationFrame(() => autoExpand(area));
+}
+function goPrevTask(prefix, stateKey) {
+    const s = loadState();
+    if (s[stateKey] > 1) { s[stateKey]--; saveState(s); renderTaskView(prefix, s[stateKey]); }
+}
+function goNextTask(prefix, stateKey) {
+    const s = loadState();
+    if (s[stateKey] < 2) { s[stateKey]++; saveState(s); renderTaskView(prefix, s[stateKey]); }
+}
+writingPrevBtn.addEventListener('click', () => goPrevTask('writing', 'writingTaskView'));
+writingNextBtn.addEventListener('click', () => goNextTask('writing', 'writingTaskView'));
+editingPrevBtn.addEventListener('click', () => goPrevTask('editing', 'editingTaskView'));
+editingNextBtn.addEventListener('click', () => goNextTask('editing', 'editingTaskView'));
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+//  AWAY / EXIT TRACKING (tab switches, window blur)
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function isTrackingPhase(phase) { return phase === 'writing' || phase === 'editing'; }
+function markAway() {
+    const state = loadState();
+    const phase = state.phase;
+    if (!isTrackingPhase(phase) || state.isAway) return;
+    state.isAway = true;
+    state.awayStart = Date.now();
+    const countKey = phase + 'ExitCount';
+    state[countKey] = (state[countKey] || 0) + 1;
+    saveState(state);
+    (phase === 'writing' ? writingExitCountEl : editingExitCountEl).textContent = state[countKey];
+}
+function markReturn() {
+    const state = loadState();
+    const phase = state.phase;
+    if (!isTrackingPhase(phase) || !state.isAway || !state.awayStart) return;
+    const duration = (Date.now() - state.awayStart) / 1000;
+    state.isAway = false;
+    const eventsKey = phase + 'ExitEvents';
+    state[eventsKey] = state[eventsKey] || [];
+    state[eventsKey].push({ start: new Date(state.awayStart).toLocaleTimeString(), end: new Date().toLocaleTimeString(), duration });
+    state.awayStart = null;
+    saveState(state);
+}
+function handleVisibilityChange() { document.hidden ? markAway() : markReturn(); }
+function handleBlur() { if (!document.hidden) markAway(); }
+function handleFocus() { markReturn(); }
+function attachAwayTracking() {
+    document.addEventListener('visibilitychange', handleVisibilityChange);
+    window.addEventListener('blur', handleBlur);
+    window.addEventListener('focus', handleFocus);
+}
+function detachAwayTracking() {
+    document.removeEventListener('visibilitychange', handleVisibilityChange);
+    window.removeEventListener('blur', handleBlur);
+    window.removeEventListener('focus', handleFocus);
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+//  KEYSTROKE / PASTE TRACKING
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function attachContentTracking(textarea, phase) {
+    textarea.addEventListener('keydown', e => {
+        if (e.key.length === 1 || e.key === 'Backspace' || e.key === 'Enter' || e.key === 'Delete') {
+            liveCounters[phase + 'Keystrokes']++;
+        }
+    });
+    textarea.addEventListener('paste', () => { liveCounters[phase + 'PasteCount']++; });
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+//  WORD-COUNT CHECKPOINTS (progress snapshots every 60s)
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function startCheckpoints(phase, startTime, area1, area2) {
+    stopCheckpoints();
+    checkpointInterval = setInterval(() => {
+        const s = loadState();
+        const key = phase + 'Checkpoints';
+        s[key] = s[key] || [];
+        s[key].push({ atSec: Math.round(getElapsed(startTime)), words: wordCount(area1.value) + wordCount(area2.value) });
+        saveState(s);
+    }, 60000);
+}
+function stopCheckpoints() { if (checkpointInterval) clearInterval(checkpointInterval); checkpointInterval = null; }
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+//  EMAIL SENDING
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function sendSubmissionEmail(state, submissionType) {
+    try { emailjs.init(EMAILJS_CONFIG.publicKey); }
+    catch (e) { console.warn('EmailJS init error:', e); return Promise.reject(e); }
+
+    const writingAway = (state.writingExitEvents || []).reduce((sum, e) => sum + (e.duration || 0), 0);
+    const editingAway = (state.editingExitEvents || []).reduce((sum, e) => sum + (e.duration || 0), 0);
+
+    const templateParams = {
+        student: state.name || '—',
+        test_code: state.testCode || '—',
+        test_title: state.testTitle || '—',
+        timestamp: getCurrentTimestamp(),
+        task1_original: state.task1Original || '(No answer)',
+        task2_original: state.task2Original || '(No answer)',
+        task1_edited: state.task1Edited || '(No edit)',
+        task2_edited: state.task2Edited || '(No edit)',
+        submissionType: submissionType,
+        to_email: EMAILJS_CONFIG.toEmail,
+        reading_time: formatTime(state.readingElapsed || 0),
+        writing_time: formatTime(state.writingElapsed || 0),
+        editing_time: formatTime(state.editingElapsed || 0),
+        writing_exits: state.writingExitCount || 0,
+        editing_exits: state.editingExitCount || 0,
+        total_exits: (state.writingExitCount || 0) + (state.editingExitCount || 0),
+        writing_away_time: formatTimeShort(writingAway),
+        editing_away_time: formatTimeShort(editingAway),
+        total_away_time: formatTimeShort(writingAway + editingAway),
+        writing_keystrokes: state.writingKeystrokes || 0,
+        editing_keystrokes: state.editingKeystrokes || 0,
+        writing_pastes: state.writingPasteCount || 0,
+        editing_pastes: state.editingPasteCount || 0,
+        writing_word_progress: checkpointsSummaryText(state.writingCheckpoints),
+        editing_word_progress: checkpointsSummaryText(state.editingCheckpoints)
+    };
+
+    return emailjs.send(EMAILJS_CONFIG.serviceID, EMAILJS_CONFIG.templateID, templateParams)
+        .then(r => { console.log('Email sent:', r); return r; })
+        .catch(err => { console.error('Email send failed:', err); throw err; });
+}
+
+function sendEmailIfNeeded(state, phase) {
+    if (phase === 'writing' && !state.emailSentWriting) {
+        const hasContent = (state.task1Original || '').trim() || (state.task2Original || '').trim();
+        if (!hasContent) return Promise.resolve();
+        state.emailSentWriting = true;
+        saveState(state);
+        return sendSubmissionEmail(state, 'Writing phase completed').catch(err => console.warn('Email failed, continuing:', err));
+    }
+    if (phase === 'editing' && !state.emailSentEditing) {
+        const hasContent = (state.task1Edited || '').trim() || (state.task2Edited || '').trim();
+        if (!hasContent) return Promise.resolve();
+        state.emailSentEditing = true;
+        saveState(state);
+        return sendSubmissionEmail(state, 'Editing phase completed').catch(err => console.warn('Email failed, continuing:', err));
+    }
+    return Promise.resolve();
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+//  TIMER ENGINE
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function runTimer(displayEl, startKey, durationSec, onComplete, elapsedInfoEl, boxEl) {
+    clearTimers();
+    function tick() {
+        const s = loadState();
+        const start = s[startKey];
+        const remaining = getRemaining(start, durationSec);
+        displayEl.textContent = formatTime(remaining);
+        if (elapsedInfoEl) elapsedInfoEl.textContent = `elapsed: ${formatTime(getElapsed(start))}`;
+        const box = boxEl || displayEl.closest('.timer-box');
+        if (box) box.classList.toggle('warning', remaining <= 30);
+        if (remaining <= 0) { clearTimers(); if (onComplete) onComplete(s); }
+    }
+    tick();
+    timerIntervals.push(setInterval(tick, 500));
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+//  PHASE TRANSITIONS
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function goToHome() {
+    ATTEMPT_KEY = null; ACTIVE_TEST = null;
+    clearTimers(); stopCheckpoints(); detachAwayTracking();
+    document.title = 'IELTS Writing Test Platform';
+    $('mainTitle').textContent = 'IELTS Writing Test Platform';
+    codeBadge.style.display = 'none';
+    timingSummary.textContent = '';
+    showCodeError('');
+    renderAttempts();
+    showPhase('phase-input');
+}
+
+function enterTest(code, name, freshState) {
+    const test = getTest(code);
+    if (!test) return false;
+    ACTIVE_TEST = test;
+    ATTEMPT_KEY = attemptKey(code, name);
+    updateQuestionDisplays(test);
+    const state = freshState || loadState();
+    state.testCode = code;
+    state.testTitle = test.title;
+    state.name = name;
+    saveState(state);
+    return state;
+}
+
+function setupReadingPhase(state) {
+    const test = ACTIVE_TEST;
+    updateQuestionDisplays(test);
+    readingTimeDisplay.textContent = formatTime(test.readingMin * 60);
+}
+
+function finishReading(s) {
+    s.readingDone = true;
+    s.readingElapsed = getElapsed(s.readingStart);
+    saveState(s);
+    goToWriting(s);
+}
+
+function goToReading(state) {
+    const test = ACTIVE_TEST;
+    state.phase = 'reading'; state.readingStart = Date.now(); state.readingDone = false;
+    state.readingElapsed = 0;
+    saveState(state); clearTimers();
+    showPhase('phase-reading');
+    setupReadingPhase(state);
+    runTimer(readingTimeDisplay, 'readingStart', test.readingMin * 60, s => { if (!s.readingDone) finishReading(s); });
+}
+
+function setupWritingPhase(state) {
+    writingArea1.value = state.task1Original || '';
+    writingArea2.value = state.task2Original || '';
+    wordCountWriting1.textContent = wordCount(writingArea1.value) + ' words';
+    wordCountWriting2.textContent = wordCount(writingArea2.value) + ' words';
+    writingExitCountEl.textContent = state.writingExitCount || 0;
+    updateQuestionDisplays(ACTIVE_TEST);
+    renderTaskView('writing', state.writingTaskView || 1);
+
+    writingArea1.oninput = () => { const s = loadState(); s.task1Original = writingArea1.value; saveState(s); wordCountWriting1.textContent = wordCount(writingArea1.value) + ' words'; autoExpand(writingArea1); };
+    writingArea2.oninput = () => { const s = loadState(); s.task2Original = writingArea2.value; saveState(s); wordCountWriting2.textContent = wordCount(writingArea2.value) + ' words'; autoExpand(writingArea2); };
+    attachContentTracking(writingArea1, 'writing');
+    attachContentTracking(writingArea2, 'writing');
+    attachAwayTracking();
+    startCheckpoints('writing', state.writingStart, writingArea1, writingArea2);
+}
+
+function finishWriting(s) {
+    s.writingDone = true;
+    s.task1Original = writingArea1.value;
+    s.task2Original = writingArea2.value;
+    s.originalSaved = true;
+    s.writingElapsed = getElapsed(s.writingStart);
+    detachAwayTracking(); stopCheckpoints();
+    Object.assign(s, flushCounters());
+    saveState(s);
+    sendEmailIfNeeded(s, 'writing').finally(() => goToReview(loadState()));
+}
+
+function goToWriting(state) {
+    const test = ACTIVE_TEST;
+    state.phase = 'writing'; state.writingStart = Date.now(); state.writingDone = false;
+    state.originalSaved = false; state.emailSentWriting = false; state.writingElapsed = 0;
+    state.isAway = false; state.awayStart = null; state.writingTaskView = 1;
+    saveState(state); clearTimers();
+    showPhase('phase-writing');
+    setupWritingPhase(state);
+    runTimer(writingTimeDisplay, 'writingStart', test.writingMin * 60, s => { if (!s.writingDone) finishWriting(s); }, writingElapsedInfo);
+}
+
+function goToReview(state) {
+    state.phase = 'review';
+    if (!state.writingElapsed) state.writingElapsed = getElapsed(state.writingStart);
+    saveState(state); clearTimers(); detachAwayTracking(); stopCheckpoints();
+    showPhase('phase-review');
+    reviewOriginal1.textContent = state.task1Original || '(No Task 1 answer was written.)';
+    reviewOriginal2.textContent = state.task2Original || '(No Task 2 answer was written.)';
+    const test = ACTIVE_TEST;
+    reviewTimeTaken.textContent = formatTime(state.writingElapsed || 0) + ' (' + formatTimeShort(state.writingElapsed || 0) + ')';
+    reviewExitCount.textContent = state.writingExitCount || 0;
+    $('editingSummaryLine').textContent = `You will have ${test.editingMin} minutes to edit both answers.`;
+}
+
+function setupEditingPhase(state) {
+    editingArea1.value = state.task1Edited || '';
+    editingArea2.value = state.task2Edited || '';
+    wordCountEditing1.textContent = wordCount(editingArea1.value) + ' words';
+    wordCountEditing2.textContent = wordCount(editingArea2.value) + ' words';
+    editingExitCountEl.textContent = state.editingExitCount || 0;
+    updateQuestionDisplays(ACTIVE_TEST);
+    renderTaskView('editing', state.editingTaskView || 1);
+
+    editingArea1.oninput = () => { const s = loadState(); s.task1Edited = editingArea1.value; saveState(s); wordCountEditing1.textContent = wordCount(editingArea1.value) + ' words'; autoExpand(editingArea1); };
+    editingArea2.oninput = () => { const s = loadState(); s.task2Edited = editingArea2.value; saveState(s); wordCountEditing2.textContent = wordCount(editingArea2.value) + ' words'; autoExpand(editingArea2); };
+    attachContentTracking(editingArea1, 'editing');
+    attachContentTracking(editingArea2, 'editing');
+    attachAwayTracking();
+    startCheckpoints('editing', state.editingStart, editingArea1, editingArea2);
+}
+
+function finishEditing(s) {
+    s.editingDone = true;
+    s.task1Edited = editingArea1.value;
+    s.task2Edited = editingArea2.value;
+    s.editedSaved = true;
+    s.editingElapsed = getElapsed(s.editingStart);
+    detachAwayTracking(); stopCheckpoints();
+    Object.assign(s, flushCounters());
+    saveState(s);
+    sendEmailIfNeeded(s, 'editing').finally(() => goToComplete(loadState()));
+}
+
+function goToEditing(state) {
+    const test = ACTIVE_TEST;
+    state.phase = 'editing'; state.editingStart = Date.now(); state.editingDone = false; state.editedSaved = false;
+    state.task1Edited = state.task1Original || ''; state.task2Edited = state.task2Original || '';
+    state.emailSentEditing = false; state.editingElapsed = 0; state.isAway = false; state.awayStart = null; state.editingTaskView = 1;
+    saveState(state); clearTimers();
+    showPhase('phase-editing');
+    setupEditingPhase(state);
+    runTimer(editingTimeDisplay, 'editingStart', test.editingMin * 60, s => { if (!s.editingDone) finishEditing(s); }, editingElapsedInfo);
+}
+
+function goToComplete(state) {
+    state.phase = 'complete';
+    if (!state.originalSaved) { state.task1Original = writingArea1.value || state.task1Original || ''; state.task2Original = writingArea2.value || state.task2Original || ''; state.originalSaved = true; }
+    if (!state.editedSaved) { state.task1Edited = editingArea1.value || state.task1Edited || state.task1Original || ''; state.task2Edited = editingArea2.value || state.task2Edited || state.task2Original || ''; state.editedSaved = true; }
+    if (!state.writingElapsed && state.writingStart) state.writingElapsed = getElapsed(state.writingStart);
+    if (!state.editingElapsed && state.editingStart) state.editingElapsed = getElapsed(state.editingStart);
+    detachAwayTracking(); clearTimers(); stopCheckpoints();
+    saveState(state);
+    showPhase('phase-complete');
+
+    completeOriginal1.textContent = state.task1Original || '(No Task 1 original)';
+    completeOriginal2.textContent = state.task2Original || '(No Task 2 original)';
+    completeEdited1.textContent = state.task1Edited || '(No Task 1 edit)';
+    completeEdited2.textContent = state.task2Edited || '(No Task 2 edit)';
+    completeName.textContent = state.name || '—';
+    completeTestTitle.textContent = (state.testCode || '') + (state.testTitle ? ' — ' + state.testTitle : '');
+
+    const wTime = state.writingElapsed || 0, eTime = state.editingElapsed || 0;
+    completeWritingTime.textContent = formatTime(wTime) + ' (' + formatTimeShort(wTime) + ')';
+    completeEditingTime.textContent = formatTime(eTime) + ' (' + formatTimeShort(eTime) + ')';
+    completeExitTotal.textContent = (state.writingExitCount || 0) + (state.editingExitCount || 0);
+
+    const allEvents = [...(state.writingExitEvents || []), ...(state.editingExitEvents || [])];
+    const totalAway = allEvents.reduce((sum, e) => sum + (e.duration || 0), 0);
+    completeAwayTime.textContent = formatTimeShort(totalAway);
+    completePasteCount.textContent = (state.writingPasteCount || 0) + (state.editingPasteCount || 0);
+    completeKeystrokesW.textContent = state.writingKeystrokes || 0;
+    completeKeystrokesE.textContent = state.editingKeystrokes || 0;
+
+    checkpointList.innerHTML = '';
+    (state.writingCheckpoints || []).forEach(c => {
+        const chip = document.createElement('span');
+        chip.className = 'checkpoint-chip';
+        chip.textContent = `${Math.round(c.atSec / 60)}m: ${c.words}w`;
+        checkpointList.appendChild(chip);
+    });
+    if (!(state.writingCheckpoints || []).length) checkpointList.innerHTML = '<span class="text-sm text-muted">Not enough writing time elapsed to record checkpoints.</span>';
+
+    emailStatusLine.textContent = (state.emailSentWriting || state.emailSentEditing)
+        ? 'Your answers have been emailed to your teacher.'
+        : 'No answer content was submitted, so no email was sent.';
+}
+
+function submitWritingEarly() {
+    const state = loadState();
+    if (state.phase !== 'writing' || state.writingDone) return;
+    finishWriting(state);
+}
+function submitEditingEarly() {
+    const state = loadState();
+    if (state.phase !== 'editing' || state.editingDone) return;
+    finishEditing(state);
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+//  RESUME AN EXISTING ATTEMPT
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+function resumeAttempt(key) {
+    const test = getTest((readIndex().find(e => e.key === key) || {}).code || '');
+    let code = test && test.code;
+    if (!code) {
+        // fall back: parse code out of the key
+        const m = String(key).match(new RegExp('^' + PLATFORM_PREFIX + '::([^:]+)::'));
+        code = m ? m[1] : null;
+    }
+    const t = code && getTest(code);
+    if (!t) return;
+    ACTIVE_TEST = t;
+    ATTEMPT_KEY = key;
+    updateQuestionDisplays(t);
+    const state = loadState();
+    state.testCode = t.code; state.testTitle = t.title;
+    saveState(state);
+
+    switch (state.phase) {
+        case 'reading': {
+            if (state.readingStart && !state.readingDone) {
+                const remaining = getRemaining(state.readingStart, t.readingMin * 60);
+                if (remaining > 0) {
+                    showPhase('phase-reading');
+                    setupReadingPhase(state);
+                    runTimer(readingTimeDisplay, 'readingStart', t.readingMin * 60, s => { if (!s.readingDone) finishReading(s); });
+                } else finishReading(state);
+            } else goToWriting(state);
+            break;
+        }
+        case 'writing': {
+            if (state.writingStart && !state.writingDone) {
+                const remaining = getRemaining(state.writingStart, t.writingMin * 60);
+                if (remaining > 0) {
+                    showPhase('phase-writing');
+                    setupWritingPhase(state);
+                    runTimer(writingTimeDisplay, 'writingStart', t.writingMin * 60, s => { if (!s.writingDone) finishWriting(s); }, writingElapsedInfo);
+                } else finishWriting(state);
+            } else goToReview(state);
+            break;
+        }
+        case 'review': goToReview(state); break;
+        case 'editing': {
+            if (state.editingStart && !state.editingDone) {
+                const remaining = getRemaining(state.editingStart, t.editingMin * 60);
+                if (remaining > 0) {
+                    showPhase('phase-editing');
+                    setupEditingPhase(state);
+                    runTimer(editingTimeDisplay, 'editingStart', t.editingMin * 60, s => { if (!s.editingDone) finishEditing(s); }, editingElapsedInfo);
+                } else finishEditing(state);
+            } else goToComplete(state);
+            break;
+        }
+        case 'complete': goToComplete(state); break;
+        default: startFresh(t, state.name || '');
+    }
+}
+
+function startFresh(test, name) {
+    const fresh = getDefaultState(test.code);
+    fresh.name = name;
+    const state = enterTest(test.code, name, fresh);
+    [writingArea1, writingArea2, editingArea1, editingArea2].forEach(ta => { ta.value = ''; });
+    writingExitCountEl.textContent = '0'; editingExitCountEl.textContent = '0';
+    renderTaskView('writing', 1); renderTaskView('editing', 1);
+    if (test.readingMin > 0) goToReading(state); else goToWriting(state);
+}
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+//  HOME SCREEN — attempts list
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+const PHASE_LABELS = { input: 'Not started', reading: 'Reading', writing: 'Writing', review: 'Review', editing: 'Editing', complete: 'Completed' };
+
+function renderAttempts() {
+    const list = readIndex();
+    attemptsWrap.style.display = list.length ? '' : 'none';
+    attemptsList.innerHTML = '';
+    list.forEach(entry => {
+        const done = entry.phase === 'complete';
+        const row = document.createElement('div');
+        row.className = 'attempt-item';
+        const when = new Date(entry.updatedAt).toLocaleString('en-US', { month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' });
+        row.innerHTML = `<span class="status-dot ${done ? 'status-done' : 'status-progress'}"></span>
+            <span><span class="who"></span> <span class="meta"></span></span>
+            <span class="spacer"></span>
+            <span class="meta">${when}</span>`;
+        row.querySelector('.who').textContent = entry.name || '—';
+        row.querySelector('.meta').textContent = `${entry.code} · ${PHASE_LABELS[entry.phase] || entry.phase}`;
+        const btn = document.createElement('button');
+        btn.className = 'btn btn-sm ' + (done ? 'btn-secondary' : 'btn-success');
+        btn.textContent = done ? 'Review' : 'Resume';
+        btn.addEventListener('click', () => resumeAttempt(entry.key));
+        row.appendChild(btn);
+        attemptsList.appendChild(row);
+    });
+}
+
+//  EVENT BINDINGS
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+btnStart.addEventListener('click', () => {
+    const name = studentName.value.trim();
+    const code = assignCode.value.trim().toUpperCase();
+    if (!name) { showCodeError('Please enter your name.'); studentName.focus(); return; }
+    const test = getTest(code);
+    if (!test) { showCodeError(`Code "${assignCode.value.trim() || '—'}" was not recognized. Ask your teacher for the correct assignment code.`); assignCode.focus(); return; }
+    if (classPassword.value !== SITE_PASSWORD) { showCodeError('Incorrect class password. Ask your teacher for the password.'); classPassword.focus(); return; }
+    showCodeError('');
+    const key = attemptKey(code, name);
+    let existing = null;
+    try { existing = localStorage.getItem(key); } catch (_) {}
+    if (existing) {
+        const st = JSON.parse(existing);
+        if (st.phase === 'complete') {
+            if (!confirm('You have already completed this test. Start a new attempt? Your previous answers will be replaced.')) return;
+            try { localStorage.removeItem(key); } catch (_) {}
+            removeFromIndex(key);
+            startFresh(test, name);
+        } else {
+            resumeAttempt(key);
+        }
+    } else {
+        startFresh(test, name);
+    }
+});
+
+btnStartWritingEarly.addEventListener('click', () => { const s = loadState(); if (s.phase === 'reading' && !s.readingDone) finishReading(s); });
+btnStartEditing.addEventListener('click', () => { const s = loadState(); if (s.phase === 'review') goToEditing(s); });
+btnSubmitWriting.addEventListener('click', submitWritingEarly);
+btnSubmitEditing.addEventListener('click', submitEditingEarly);
+
+btnHome.addEventListener('click', goToHome);
+btnRetake.addEventListener('click', () => {
+    if (!ATTEMPT_KEY) { goToHome(); return; }
+    if (confirm('Retake this test? Your current answers on this device will be cleared.')) {
+        const code = loadState().testCode, name = loadState().name;
+        try { localStorage.removeItem(ATTEMPT_KEY); } catch (_) {}
+        removeFromIndex(ATTEMPT_KEY);
+        const test = getTest(code);
+        studentName.value = name || '';
+        assignCode.value = code || '';
+        goToHome();
+        if (test && name) { studentName.value = name; assignCode.value = code; }
+    }
+});
+
+assignCode.addEventListener('input', () => {
+    const code = assignCode.value.trim().toUpperCase();
+    const test = getTest(code);
+    timingSummary.textContent = test ? `${test.title} — ${timingText(test)}.` : '';
+    if (test) showCodeError('');
+});
+studentName.addEventListener('keydown', e => { if (e.key === 'Enter') btnStart.click(); });
+assignCode.addEventListener('keydown', e => { if (e.key === 'Enter') btnStart.click(); });
+classPassword.addEventListener('keydown', e => { if (e.key === 'Enter') btnStart.click(); });
+
+// Fallback autosave + counter flush every 5s
+setInterval(() => {
+    if (!ATTEMPT_KEY) return;
+    const state = loadState();
+    if (state.phase === 'writing' || state.phase === 'editing') flushCounters();
+}, 5000);
+
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+//  INIT
+// ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+(function init() {
+    // Support ?code=AC-SEPT1 links from the teacher
+    try {
+        const params = new URLSearchParams(window.location.search);
+        const preset = (params.get('code') || '').trim().toUpperCase();
+        if (preset && getTest(preset)) {
+            assignCode.value = preset;
+            assignCode.dispatchEvent(new Event('input'));
+        }
+    } catch (_) {}
+    // EmailJS is loaded from CDN — guard if offline
+    if (typeof emailjs === 'undefined') {
+        const s = document.createElement('script');
+        s.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';
+        document.head.appendChild(s);
+    }
+    goToHome();
+    console.log('IELTS Writing Test Platform loaded. Tests available:', Object.keys(QUESTION_BANK).join(', '));
+})();
+</script>
+
+</body>
+</html>
