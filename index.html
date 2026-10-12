@@ -9,10 +9,10 @@
 <!-- EmailJS (sends finished submissions to the teacher) -->
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 
-<!-- Typography: Montserrat for interface, EB Garamond for test content, IBM Plex Mono for timer/codes (matches thuy-dau.weebly.com) -->
+<!-- Typography: Montserrat for interface, Arial for question/answer text, IBM Plex Mono for timer/codes -->
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=EB+Garamond:ital,wght@0,400;0,500;0,600;1,400&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;500;600;700;800&family=IBM+Plex+Mono:wght@500;600;700&display=swap" rel="stylesheet">
 
 <style>
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -88,7 +88,7 @@
     .msg-warning { background: #fdf3e3; color: #7a4a12; border-color: #eed3a8; }
     .msg-error { background: #fdeeee; color: #8a1f2b; border-color: #f0c0c6; display: none; }
 
-    .question-block { font-family: 'EB Garamond', Georgia, 'Times New Roman', serif; background: #faf8ff; border: 1px solid var(--lavender-line); border-left: 3px solid var(--primary); padding: 14px 18px; border-radius: 3px; font-size: 16px; line-height: 1.65; color: var(--ink); margin-bottom: 14px; }
+    .question-block { font-family: Arial, Helvetica, sans-serif; background: #faf8ff; border: 1px solid var(--lavender-line); border-left: 3px solid var(--primary); padding: 14px 18px; border-radius: 3px; font-size: 16px; line-height: 1.65; color: var(--ink); margin-bottom: 14px; }
     .question-block .q-label { display: inline-block; background: var(--primary); color: #fff; font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: 1.2px; padding: 3px 9px; border-radius: 2px; margin-bottom: 8px; }
     .question-block .task-note { font-size: 13px; color: var(--muted); margin-top: 8px; font-style: italic; }
     .question-block ul { margin: 6px 0 6px 20px; }
@@ -151,7 +151,7 @@
     .mb-12 { margin-bottom: 12px; } .mb-20 { margin-bottom: 20px; }
 
     .scroll-box {
-        font-family: 'EB Garamond', Georgia, 'Times New Roman', serif;
+        font-family: Arial, Helvetica, sans-serif;
         max-height: 220px; overflow-y: auto; border: 1px solid var(--lavender-line); border-radius: 3px;
         padding: 12px 16px; background: #faf8ff; white-space: pre-wrap; font-size: 16.5px; line-height: 1.7;
     }
