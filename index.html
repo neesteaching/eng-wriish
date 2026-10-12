@@ -533,6 +533,23 @@ const QUESTION_BANK = {
         }
         // no task1 → students only do Task 2
     },
+    "AC-OCT1": {
+        title: "IELTS Academic Writing Test — October Set 1",
+        readingMin: 0,
+        writingMin: 60,
+        editingMin: 60,
+        task1: {
+            minWords: 150,
+            html: `
+                <p><strong>The table below shows the information about medical care in three European countries between 1980 and 2000. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.</strong></p>
+                <img src="ac-oct1-task1.png" alt="Table chart" />
+            `
+        },
+        task2: {
+            minWords: 250,
+            html: `<p>Although there is a lot of translation software available, learning a language is still necessary. To what extent do you agree or disagree?</p>`
+        }
+    },
 
     // ══════════════════════════════════════════════════════
     //  GENERAL TRAINING — normally no chart images here
@@ -554,6 +571,25 @@ const QUESTION_BANK = {
         task2: {
             minWords: 250,
             html: `<p>Nowadays we are producing more and more rubbish. Why do you think this is happening? What can governments do to help reduce the amount of rubbish produced?</p>`
+        }
+    },
+    "GT-OCT1": {
+        title: "VSTEP Writing Test \u2014 October Set 1",
+        readingMin: 3,
+        writingMin: 60,
+        editingMin: 60,
+        task1: {
+            minWords: 120,
+            html: `
+                <p>You have discovered a lot of rubbish in a lake near where you live. In the past, the lake had always been clean. Write a letter to the local council. In the letter:</p>
+                <p>- describe the type of rubbish that you saw in the lake</p>
+                <p>- explain where you think the waste has come from</p>
+                <p>- suggest what the council should do about the problem</p>
+            `
+        },
+        task2: {
+            minWords: 250,
+            html: `<p>Nowadays famous people are photographed by professional photographers everywhere they go. Some people say this is a good thing because the public are interested in their lives. Other people think that photographers are wrong to follow famous people. Discuss both these views and give your own opinion.</p>`
         }
     }
 };
