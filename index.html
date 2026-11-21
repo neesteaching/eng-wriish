@@ -550,6 +550,31 @@ const QUESTION_BANK = {
             html: `<p>Although there is a lot of translation software available, learning a language is still necessary. To what extent do you agree or disagree?</p>`
         }
     },
+    "AC-OCT1-T1": {
+        title: "IELTS Academic Writing — Task 1 Only",
+        readingMin: 0,
+        writingMin: 20,
+        editingMin: 20,
+        task1: {
+            minWords: 150,
+            html: `
+                <p><strong>The table below shows the information about medical care in three European countries between 1980 and 2000. Summarise the information by selecting and reporting the main features, and make comparisons where relevant.</strong></p>
+                <img src="ac-oct1-task1.png" alt="Table chart" />
+            `
+        }
+        // no task2 → students only do Task 1
+    },
+    "AC-OCT1-T2": {
+        title: "IELTS Academic Writing — Task 2 Only",
+        readingMin: 0,
+        writingMin: 40,
+        editingMin: 40,
+        task2: {
+            minWords: 250,
+            html: `<p>Although there is a lot of translation software available, learning a language is still necessary. To what extent do you agree or disagree?</p>`
+        }
+        // no task1 → students only do Task 2
+    },
 
     // ══════════════════════════════════════════════════════
     //  GENERAL TRAINING — normally no chart images here
@@ -573,6 +598,33 @@ const QUESTION_BANK = {
             html: `<p>Nowadays we are producing more and more rubbish. Why do you think this is happening? What can governments do to help reduce the amount of rubbish produced?</p>`
         }
     },
+    "GT-SEPT1-T1": {
+        title: "IELTS General Training Writing — Task 1 Only",
+        readingMin: 0,
+        writingMin: 30,
+        editingMin: 60,
+        task1: {
+            minWords: 120,
+            html: `
+                <p>You and some friends ate a meal at a restaurant to celebrate a special occasion, and you were very pleased with the food and service. Write a letter to the restaurant manager. In your letter:</p>
+                <p>- Give details of your visit to the restaurant</p>
+                <p>- Explain the reason for the celebration</p>
+                <p>- Say what was good about the food and the service</p>
+            `
+        }
+        // no task2 → students only do Task 1
+    },
+    "GT-SEPT1-T2": {
+        title: "IELTS General Training Writing — Task 2 Only",
+        readingMin: 0,
+        writingMin: 40,
+        editingMin: 40,
+        task2: {
+            minWords: 250,
+            html: `<p>Nowadays we are producing more and more rubbish. Why do you think this is happening? What can governments do to help reduce the amount of rubbish produced?</p>`
+        }
+        // no task1 → students only do Task 2
+    },
     "GT-OCT1": {
         title: "IELTS General Training Writing Test \u2014 October Set 1",
         readingMin: 3,
@@ -591,6 +643,33 @@ const QUESTION_BANK = {
             minWords: 250,
             html: `<p>Nowadays famous people are photographed by professional photographers everywhere they go. Some people say this is a good thing because the public are interested in their lives. Other people think that photographers are wrong to follow famous people. Discuss both these views and give your own opinion.</p>`
         }
+    },
+    "GT-OCT1-T1": {
+        title: "IELTS General Training Writing — Task 1 Only",
+        readingMin: 0,
+        writingMin: 30,
+        editingMin: 60,
+        task1: {
+            minWords: 120,
+            html: `
+                <p>You have discovered a lot of rubbish in a lake near where you live. In the past, the lake had always been clean. Write a letter to the local council. In the letter:</p>
+                <p>- describe the type of rubbish that you saw in the lake</p>
+                <p>- explain where you think the waste has come from</p>
+                <p>- suggest what the council should do about the problem</p>
+            `
+        }
+        // no task2 → students only do Task 1
+    },
+    "GT-OCT1-T2": {
+        title: "IELTS General Training Writing — Task 2 Only",
+        readingMin: 0,
+        writingMin: 40,
+        editingMin: 40,
+        task2: {
+            minWords: 250,
+            html: `<p>Nowadays famous people are photographed by professional photographers everywhere they go. Some people say this is a good thing because the public are interested in their lives. Other people think that photographers are wrong to follow famous people. Discuss both these views and give your own opinion.</p>`
+        }
+        // no task1 → students only do Task 2
     },
     "GT-OCT2": {
         title: "IELTS General Training Writing Test — October Set 2",
@@ -629,6 +708,17 @@ const QUESTION_BANK = {
         }
         // no task2 → students only do Task 1
     },
+    "GT-OCT2-T2": {
+        title: "IELTS General Training Writing — Task 2 Only",
+        readingMin: 0,
+        writingMin: 40,
+        editingMin: 40,
+        task2: {
+            minWords: 250,
+            html: `<p>It is sometimes possible to pay somebody to do things you don't want to do, or don't have time to do, for example, household chores or looking after children. Is this a good way of providing work for others? Should people do these things themselves?</p>`
+        }
+        // no task1 → students only do Task 2
+    },
     "GT-NOV1": {
         title: "IELTS General Training Writing Test — November Set 1",
         readingMin: 0,
@@ -663,8 +753,404 @@ const QUESTION_BANK = {
             `
         }
         // no task2 → students only do Task 1
+    },
+    "GT-NOV1-T2": {
+        title: "IELTS General Training Writing — Task 2 Only",
+        readingMin: 0,
+        writingMin: 40,
+        editingMin: 40,
+        task2: {
+            minWords: 250,
+            html: `<p>Some consumers are increasingly choosing to buy goods that are produced in their local area, rather than imported goods. What are the reasons for this? Is this a positive or a negative trend? Give reasons for your answer and include any relevant examples from your own knowledge or experience.</p>`
+        }
+        // no task1 → students only do Task 2
+    },
+    "GT-NOV2": {
+        title: "IELTS General Training Writing Test — November Set 2",
+        readingMin: 0,
+        writingMin: 60,
+        editingMin: 60,
+        task1: {
+            minWords: 150,
+            html: `
+                <p>A friend of yours is thinking of going on a camping holiday for the first time this summer. He/She has asked for your advice. Write a letter to your friend. In your letter:</p>
+                <p>- explain why you think your friend would enjoy a camping holiday</p>
+                <p>- describe some possible disadvantages</p>
+                <p>- say whether you would like to go camping with your friend this summer</p>
+                <p>Write at least 150 words. You do NOT need to write any addresses. Begin your letter as follows: Dear ............................ ,</p>
+            `
+        },
+        task2: {
+            minWords: 250,
+            html: `<p>In many countries today, crime novels and TV crime dramas are becoming more and more popular. Why do you think these books and TV shows are popular? What is your opinion of crime fiction and TV crime dramas?</p>`
+        }
+    },
+    "GT-NOV2-T1": {
+        title: "IELTS General Training Writing — Task 1 Only",
+        readingMin: 0,
+        writingMin: 30,
+        editingMin: 60,
+        task1: {
+            minWords: 150,
+            html: `
+                <p>A friend of yours is thinking of going on a camping holiday for the first time this summer. He/She has asked for your advice. Write a letter to your friend. In your letter:</p>
+                <p>- explain why you think your friend would enjoy a camping holiday</p>
+                <p>- describe some possible disadvantages</p>
+                <p>- say whether you would like to go camping with your friend this summer</p>
+                <p>Write at least 150 words. You do NOT need to write any addresses. Begin your letter as follows: Dear ............................ ,</p>
+            `
+        }
+        // no task2 → students only do Task 1
+    },
+    "GT-NOV2-T2": {
+        title: "IELTS General Training Writing — Task 2 Only",
+        readingMin: 0,
+        writingMin: 40,
+        editingMin: 40,
+        task2: {
+            minWords: 250,
+            html: `<p>In many countries today, crime novels and TV crime dramas are becoming more and more popular. Why do you think these books and TV shows are popular? What is your opinion of crime fiction and TV crime dramas?</p>`
+        }
+        // no task1 → students only do Task 2
+    },
+    "GT-NOV3": {
+        title: "IELTS General Training Writing Test — November Set 3",
+        readingMin: 0,
+        writingMin: 60,
+        editingMin: 60,
+        task1: {
+            minWords: 150,
+            html: `
+                <p>A museum near your home is looking for people to do part-time voluntary/unpaid work. You would like to do some voluntary/unpaid work at the museum. Write a letter to the museum director to apply for the voluntary/unpaid work. In your letter:</p>
+                <p>- explain why you want to do voluntary/unpaid work at the museum</p>
+                <p>- describe some skills and qualities you have that would be useful</p>
+                <p>- give details of when you would be available for work</p>
+                <p>Write at least 150 words. You do NOT need to write any addresses. Begin your letter as follows: Dear Sir or Madam,</p>
+            `
+        },
+        task2: {
+            minWords: 250,
+            html: `<p>Nowadays many people complain that they have difficulties getting enough sleep. What problems can lack of sleep cause? What can be done about lack of sleep?</p>`
+        }
+    },
+    "GT-NOV3-T1": {
+        title: "IELTS General Training Writing — Task 1 Only",
+        readingMin: 0,
+        writingMin: 30,
+        editingMin: 60,
+        task1: {
+            minWords: 150,
+            html: `
+                <p>A museum near your home is looking for people to do part-time voluntary/unpaid work. You would like to do some voluntary/unpaid work at the museum. Write a letter to the museum director to apply for the voluntary/unpaid work. In your letter:</p>
+                <p>- explain why you want to do voluntary/unpaid work at the museum</p>
+                <p>- describe some skills and qualities you have that would be useful</p>
+                <p>- give details of when you would be available for work</p>
+                <p>Write at least 150 words. You do NOT need to write any addresses. Begin your letter as follows: Dear Sir or Madam,</p>
+            `
+        }
+        // no task2 → students only do Task 1
+    },
+    "GT-NOV3-T2": {
+        title: "IELTS General Training Writing — Task 2 Only",
+        readingMin: 0,
+        writingMin: 40,
+        editingMin: 40,
+        task2: {
+            minWords: 250,
+            html: `<p>Nowadays many people complain that they have difficulties getting enough sleep. What problems can lack of sleep cause? What can be done about lack of sleep?</p>`
+        }
+        // no task1 → students only do Task 2
+    },
+    "GT-NOV4": {
+        title: "IELTS General Training Writing Test — November Set 4",
+        readingMin: 0,
+        writingMin: 60,
+        editingMin: 60,
+        task1: {
+            minWords: 150,
+            html: `
+                <p>A friend of yours is thinking about applying for the same course that you did at university. He/She has asked for your advice about studying this subject. Write a letter to your friend. In your letter:</p>
+                <p>- give details of the course you took at the university</p>
+                <p>- explain why you recommend the university</p>
+                <p>- give some advice about how to apply</p>
+                <p>Write at least 150 words. You do NOT need to write any addresses. Begin your letter as follows: Dear ............................ ,</p>
+            `
+        },
+        task2: {
+            minWords: 250,
+            html: `<p>In the future, more people will choose to go on holiday in their own country and not travel abroad on holiday. Do you agree or disagree?</p>`
+        }
+    },
+    "GT-NOV4-T1": {
+        title: "IELTS General Training Writing — Task 1 Only",
+        readingMin: 0,
+        writingMin: 30,
+        editingMin: 60,
+        task1: {
+            minWords: 150,
+            html: `
+                <p>A friend of yours is thinking about applying for the same course that you did at university. He/She has asked for your advice about studying this subject. Write a letter to your friend. In your letter:</p>
+                <p>- give details of the course you took at the university</p>
+                <p>- explain why you recommend the university</p>
+                <p>- give some advice about how to apply</p>
+                <p>Write at least 150 words. You do NOT need to write any addresses. Begin your letter as follows: Dear ............................ ,</p>
+            `
+        }
+        // no task2 → students only do Task 1
+    },
+    "GT-NOV4-T2": {
+        title: "IELTS General Training Writing — Task 2 Only",
+        readingMin: 0,
+        writingMin: 40,
+        editingMin: 40,
+        task2: {
+            minWords: 250,
+            html: `<p>In the future, more people will choose to go on holiday in their own country and not travel abroad on holiday. Do you agree or disagree?</p>`
+        }
+        // no task1 → students only do Task 2
+    },
+    "GT-NOV5": {
+        title: "IELTS General Training Writing Test — November Set 5",
+        readingMin: 0,
+        writingMin: 60,
+        editingMin: 60,
+        task1: {
+            minWords: 150,
+            html: `
+                <p>You have seen an advertisement from a couple, who live in Australia, for someone to teach their two children your language for a year. Write a letter to the couple. In your letter:</p>
+                <p>- explain why you think you would be suitable for the job</p>
+                <p>- say what else you could do for the family</p>
+                <p>- give your reasons for wanting the job</p>
+                <p>Write at least 150 words. You do NOT need to write any addresses. Begin your letter as follows: Dear ............................ ,</p>
+            `
+        },
+        task2: {
+            minWords: 250,
+            html: `<p>In many countries, paying for things using mobile phone (cellphone) apps is becoming increasingly common. Does this development have more advantages or more disadvantages?</p>`
+        }
+    },
+    "GT-NOV5-T1": {
+        title: "IELTS General Training Writing — Task 1 Only",
+        readingMin: 0,
+        writingMin: 30,
+        editingMin: 60,
+        task1: {
+            minWords: 150,
+            html: `
+                <p>You have seen an advertisement from a couple, who live in Australia, for someone to teach their two children your language for a year. Write a letter to the couple. In your letter:</p>
+                <p>- explain why you think you would be suitable for the job</p>
+                <p>- say what else you could do for the family</p>
+                <p>- give your reasons for wanting the job</p>
+                <p>Write at least 150 words. You do NOT need to write any addresses. Begin your letter as follows: Dear ............................ ,</p>
+            `
+        }
+        // no task2 → students only do Task 1
+    },
+    "GT-NOV5-T2": {
+        title: "IELTS General Training Writing — Task 2 Only",
+        readingMin: 0,
+        writingMin: 40,
+        editingMin: 40,
+        task2: {
+            minWords: 250,
+            html: `<p>In many countries, paying for things using mobile phone (cellphone) apps is becoming increasingly common. Does this development have more advantages or more disadvantages?</p>`
+        }
+        // no task1 → students only do Task 2
+    },
+    "GT-DEC1": {
+        title: "IELTS General Training Writing Test — December Set 1",
+        readingMin: 0,
+        writingMin: 60,
+        editingMin: 60,
+        task1: {
+            minWords: 150,
+            html: `
+                <p>You have seen an advertisement in an Australian magazine for someone to live with a family for six months and look after their six-year-old child. Write a letter to the parents. In your letter:</p>
+                <p>- explain why you would like the job</p>
+                <p>- give details of why you would be a suitable person to employ</p>
+                <p>- say how you would spend your free time while you are in Australia</p>
+                <p>Write at least 150 words. You do NOT need to write any addresses. Begin your letter as follows: Dear Sir or Madam,</p>
+            `
+        },
+        task2: {
+            minWords: 250,
+            html: `<p>The growth of online shopping will one day lead to all shops in towns and cities closing. Do you agree or disagree?</p>`
+        }
+    },
+    "GT-DEC1-T1": {
+        title: "IELTS General Training Writing — Task 1 Only",
+        readingMin: 0,
+        writingMin: 30,
+        editingMin: 60,
+        task1: {
+            minWords: 150,
+            html: `
+                <p>You have seen an advertisement in an Australian magazine for someone to live with a family for six months and look after their six-year-old child. Write a letter to the parents. In your letter:</p>
+                <p>- explain why you would like the job</p>
+                <p>- give details of why you would be a suitable person to employ</p>
+                <p>- say how you would spend your free time while you are in Australia</p>
+                <p>Write at least 150 words. You do NOT need to write any addresses. Begin your letter as follows: Dear Sir or Madam,</p>
+            `
+        }
+        // no task2 → students only do Task 1
+    },
+    "GT-DEC1-T2": {
+        title: "IELTS General Training Writing — Task 2 Only",
+        readingMin: 0,
+        writingMin: 40,
+        editingMin: 40,
+        task2: {
+            minWords: 250,
+            html: `<p>The growth of online shopping will one day lead to all shops in towns and cities closing. Do you agree or disagree?</p>`
+        }
+        // no task1 → students only do Task 2
+    },
+    "GT-DEC2": {
+        title: "IELTS General Training Writing Test — December Set 2",
+        readingMin: 0,
+        writingMin: 60,
+        editingMin: 60,
+        task1: {
+            minWords: 150,
+            html: `
+                <p>You have just read an article in an international travel magazine which contained some information about your town that is incorrect. Write a letter to the editor of the magazine. In your letter:</p>
+                <p>- correct the information in the article</p>
+                <p>- explain why it is important for the magazine to give correct information</p>
+                <p>- suggest what the magazine should do about this situation</p>
+                <p>Write at least 150 words. You do NOT need to write any addresses. Begin your letter as follows: Dear Sir or Madam,</p>
+            `
+        },
+        task2: {
+            minWords: 250,
+            html: `<p>Some people think it's better to choose friends who always have the same opinions as them. Other people believe it's good to have friends who sometimes disagree with them. Discuss both these views and give your own opinion.</p>`
+        }
+    },
+    "GT-DEC2-T1": {
+        title: "IELTS General Training Writing — Task 1 Only",
+        readingMin: 0,
+        writingMin: 30,
+        editingMin: 60,
+        task1: {
+            minWords: 150,
+            html: `
+                <p>You have just read an article in an international travel magazine which contained some information about your town that is incorrect. Write a letter to the editor of the magazine. In your letter:</p>
+                <p>- correct the information in the article</p>
+                <p>- explain why it is important for the magazine to give correct information</p>
+                <p>- suggest what the magazine should do about this situation</p>
+                <p>Write at least 150 words. You do NOT need to write any addresses. Begin your letter as follows: Dear Sir or Madam,</p>
+            `
+        }
+        // no task2 → students only do Task 1
+    },
+    "GT-DEC2-T2": {
+        title: "IELTS General Training Writing — Task 2 Only",
+        readingMin: 0,
+        writingMin: 40,
+        editingMin: 40,
+        task2: {
+            minWords: 250,
+            html: `<p>Some people think it's better to choose friends who always have the same opinions as them. Other people believe it's good to have friends who sometimes disagree with them. Discuss both these views and give your own opinion.</p>`
+        }
+        // no task1 → students only do Task 2
+    },
+    "GT-DEC3": {
+        title: "IELTS General Training Writing Test — December Set 3",
+        readingMin: 0,
+        writingMin: 60,
+        editingMin: 60,
+        task1: {
+            minWords: 150,
+            html: `
+                <p>You recently did a short cookery course. The cookery school has asked for your feedback on this course. Write a letter to the course director at the cookery school. In your letter:</p>
+                <p>- describe what you enjoyed about the course</p>
+                <p>- say how much cooking you've done since the course</p>
+                <p>- suggest another cookery course you'd like the school to offer</p>
+                <p>Write at least 150 words. You do NOT need to write any addresses. Begin your letter as follows: Dear Sir or Madam,</p>
+            `
+        },
+        task2: {
+            minWords: 250,
+            html: `<p>Some people say the main way to be happy in life is to have a lot of money. How might having a lot of money make people happy? What other things in life can make people happy?</p>`
+        }
+    },
+    "GT-DEC3-T1": {
+        title: "IELTS General Training Writing — Task 1 Only",
+        readingMin: 0,
+        writingMin: 30,
+        editingMin: 60,
+        task1: {
+            minWords: 150,
+            html: `
+                <p>You recently did a short cookery course. The cookery school has asked for your feedback on this course. Write a letter to the course director at the cookery school. In your letter:</p>
+                <p>- describe what you enjoyed about the course</p>
+                <p>- say how much cooking you've done since the course</p>
+                <p>- suggest another cookery course you'd like the school to offer</p>
+                <p>Write at least 150 words. You do NOT need to write any addresses. Begin your letter as follows: Dear Sir or Madam,</p>
+            `
+        }
+        // no task2 → students only do Task 1
+    },
+    "GT-DEC3-T2": {
+        title: "IELTS General Training Writing — Task 2 Only",
+        readingMin: 0,
+        writingMin: 40,
+        editingMin: 40,
+        task2: {
+            minWords: 250,
+            html: `<p>Some people say the main way to be happy in life is to have a lot of money. How might having a lot of money make people happy? What other things in life can make people happy?</p>`
+        }
+        // no task1 → students only do Task 2
+    },
+    "GT-DEC4": {
+        title: "IELTS General Training Writing Test — December Set 4",
+        readingMin: 0,
+        writingMin: 60,
+        editingMin: 60,
+        task1: {
+            minWords: 150,
+            html: `
+                <p>You recently went to a concert and thought one of the singers was very good. You want to tell him how you feel. Write a letter to the singer. In your letter:</p>
+                <p>- say how you feel about his performance</p>
+                <p>- give details of your musical activities</p>
+                <p>- explain how you would like him to help you with your musical activities</p>
+                <p>Write at least 150 words. You do NOT need to write any addresses. Begin your letter as follows: Dear ............................ ,</p>
+            `
+        },
+        task2: {
+            minWords: 250,
+            html: `<p>Many people work long hours, leaving very little time for leisure activities. Does this situation have more advantages or more disadvantages?</p>`
+        }
+    },
+    "GT-DEC4-T1": {
+        title: "IELTS General Training Writing — Task 1 Only",
+        readingMin: 0,
+        writingMin: 30,
+        editingMin: 60,
+        task1: {
+            minWords: 150,
+            html: `
+                <p>You recently went to a concert and thought one of the singers was very good. You want to tell him how you feel. Write a letter to the singer. In your letter:</p>
+                <p>- say how you feel about his performance</p>
+                <p>- give details of your musical activities</p>
+                <p>- explain how you would like him to help you with your musical activities</p>
+                <p>Write at least 150 words. You do NOT need to write any addresses. Begin your letter as follows: Dear ............................ ,</p>
+            `
+        }
+        // no task2 → students only do Task 1
+    },
+    "GT-DEC4-T2": {
+        title: "IELTS General Training Writing — Task 2 Only",
+        readingMin: 0,
+        writingMin: 40,
+        editingMin: 40,
+        task2: {
+            minWords: 250,
+            html: `<p>Many people work long hours, leaving very little time for leisure activities. Does this situation have more advantages or more disadvantages?</p>`
+        }
+        // no task1 → students only do Task 2
     }
 };
+
 
 // ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
 //  CLASS PASSWORD — students need this AND their assignment code
